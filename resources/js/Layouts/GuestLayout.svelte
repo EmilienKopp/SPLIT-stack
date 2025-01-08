@@ -4,7 +4,7 @@
     children?: import('svelte').Snippet;
   }
 
-  let { title = 'SSW', children }: Props = $props();
+  let { title = 'SPLIT-STACK', children }: Props = $props();
 </script>
 
 <h1 class="text-2xl font-semibold text-gray-900">{ title }</h1>

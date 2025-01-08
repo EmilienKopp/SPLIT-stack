@@ -1,14 +1,14 @@
 <script lang="ts">
   import { preventDefault } from 'svelte/legacy';
 
-  import Button from '@/Components/Actions/FormActionButtons.svelte';
-  import Input from '@/Components/DataInput/Input.svelte';
-  import GuestLayout from '@/Layouts/GuestLayout.svelte';
+  import Button from '$components/Actions/Button.svelte';
+  import Input from '$components/DataInput/Input.svelte';
+  import PasswordInput from '$components/DataInput/PasswordInput.svelte';
+  import GuestLayout from '$layouts/GuestLayout.svelte';
   import { Link, useForm } from '@inertiajs/svelte';
 
   const form = useForm({
-    first_name: '',
-    last_name: '',
+    name: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -29,25 +29,15 @@
     <div class="flex flex-row gap-4">
       <Input
         label="First Name"
-        id="first_name"
+        id="name"
+        name="name"
         type="text"
         class=""
-        bind:value={$form.first_name}
+        bind:value={$form.name}
         required
         autofocus
-        autocomplete="first_name"
-        errors={$form.errors.first_name}
-      />
-      <Input
-        label="Last Name"
-        id="last_name"
-        type="text"
-        class=""
-        bind:value={$form.last_name}
-        required
-        autofocus
-        autocomplete="last_name"
-        errors={$form.errors.last_name}
+        autocomplete="name"
+        errors={$form.errors.name}
       />
     </div>
 
@@ -55,6 +45,7 @@
       <Input
         label="Email"
         id="email"
+        name="email"
         type="email"
         class=""
         bind:value={$form.email}
@@ -65,10 +56,10 @@
     </div>
 
     <div class="mt-4">
-      <Input
+      <PasswordInput
         label="Password"
         id="password"
-        type="password"
+        name="password"
         class=""
         bind:value={$form.password}
         required
@@ -78,10 +69,10 @@
     </div>
 
     <div class="mt-4">
-      <Input
+      <PasswordInput
         label="Confirm Password"
         id="password_confirmation"
-        type="password"
+        name="password_confirmation"
         class=""
         bind:value={$form.password_confirmation}
         required

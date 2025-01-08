@@ -1,10 +1,10 @@
 services:
     pg:
         image: postgres:15
-        container_name: ssw_pg
+        container_name: SPLIT-POSTGRES
         restart: unless-stopped
         environment:
-            POSTGRES_DB: ssw_db
+            POSTGRES_DB: split_db
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: secret
             POSTGRES_HOST_AUTH_METHOD: trust
@@ -17,7 +17,7 @@ services:
 
     pgadmin:
         image: dpage/pgadmin4
-        container_name: ssw_pgadmin
+        container_name: SPLIT-PGADMIN
         restart: unless-stopped
         environment:
             PGADMIN_DEFAULT_EMAIL: admin@admin.com
@@ -27,28 +27,5 @@ services:
             - "5050:80"
         depends_on:
             - pg
-
-    typesense:
-        container_name: typesense
-        image: 'typesense/typesense:26.0'
-        ports:
-            - '${FORWARD_TYPESENSE_PORT:-8108}:8108'
-        environment:
-            TYPESENSE_DATA_DIR: '${TYPESENSE_DATA_DIR:-/typesense-data}'
-            TYPESENSE_API_KEY: '${TYPESENSE_API_KEY:-xyz}'
-            TYPESENSE_ENABLE_CORS: '${TYPESENSE_ENABLE_CORS:-true}'
-        volumes:
-            - 'typesense_data:/typesense-data'
-        healthcheck:
-            test:
-                - CMD
-                - wget
-                - '--no-verbose'
-                - '--spider'
-                - 'http://localhost:8108/health'
-            retries: 5
-            timeout: 7s
 volumes:
-    typesense_data:
-        driver: local
     postgres_data:

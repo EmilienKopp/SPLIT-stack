@@ -1,7 +1,10 @@
 <script lang="ts">
+  import Button from '$components/Actions/Button.svelte';
+  import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
+  import { user } from '$lib/inertia';
 
-  let modal: HTMLDialogElement;
+  console.log(user);
 </script>
 
 <svelte:head>
@@ -15,11 +18,14 @@
     </h2>
   {/snippet}
 
-  <div class="py-12">
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-        <div class="p-6 text-gray-900 flex items-center">
+  <div class="py-12 w-full">
+    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 w-full">
+      <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-full">
+        <div class="p-6 text-gray-900 flex items-center justify-between w-full">
           You're logged in! 🎉
+          <Button variant="secondary" onclick={() => toaster.info('🍞 Toasted!')}>
+            Toast me!
+          </Button>
         </div>
       </div>
     </div>

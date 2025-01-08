@@ -3,12 +3,12 @@
 <!-- @migration-task Error while migrating Svelte code: migrating this component would require adding a `$props` rune but there's already a variable named props.
      Rename the variable and try again or migrate by hand. -->
 <script lang="ts">
-  import { twMerge } from 'tailwind-merge';
+  import DeleteButton from '$components/Display/DeleteButton.svelte';
+  import DownloadLink from '$components/Navigation/DownloadLink.svelte';
+  import { MediaHandler, type MediaForm, type MediaFormCollection, type MediaProp } from '$lib/domain/media';
   import { superUseForm } from '$lib/inertia';
   import { props } from '$lib/stores';
-  import { MediaHandler, type MediaProp, type MediaForm, type MediaFormCollection } from '$lib/domain/media';
-  import DownloadLink from '$components/Navigation/DownloadLink.svelte';
-  import DeleteButton from '$components/Display/DeleteButton.svelte';
+  import { twMerge } from 'tailwind-merge';
 
   export let label: string = '';
   export let name: MediaFormCollection;

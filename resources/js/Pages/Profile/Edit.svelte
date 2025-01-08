@@ -1,6 +1,5 @@
 <script lang="ts">
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
-  import { Head } from '@inertiajs/svelte';
   import DeleteUserForm from './Partials/DeleteUserForm.svelte';
   import UpdatePasswordForm from './Partials/UpdatePasswordForm.svelte';
   import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.svelte';
@@ -13,8 +12,9 @@
   export let mustVerifyEmail: Props['mustVerifyEmail'] = false;
   export let status: Props['status'] = undefined;
 </script>
-
-<Head title="Profile" />
+<svelte:head>
+  <title>Profile</title>
+</svelte:head>
 
 <AuthenticatedLayout>
   <svelte:fragment slot="header">

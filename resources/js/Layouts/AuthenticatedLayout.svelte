@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import Dropdown from '$components/Actions/Dropdown.svelte';
   import ApplicationLogo from '$components/ApplicationLogo.svelte';
-  import Toast from '$components/Feedback/Toast.svelte';
+  import Toast from '$components/Feedback/Toast/Toast.svelte';
   import NavLink from '$components/Navigation/NavLink.svelte';
   import ResponsiveNavLink from '$components/Navigation/ResponsiveNavLink.svelte';
   import { user } from '$lib/stores';
@@ -34,6 +34,8 @@
   ];
 </script>
 
+
+<Toast show={false} />
 <div>
   <div class="min-h-screen bg-gray-100">
     <nav class="border-b border-gray-100 bg-white">
@@ -54,46 +56,11 @@
             <div
               class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center"
             >
-              {#if $user.role !== 'candidate'}
-                <NavLink
-                  href={route('employers.index')}
-                  active={route().current('employers.index')}
-                >
-                  Employers
-                </NavLink>
-                {#if $user.role === 'admin'}
-                <NavLink
-                  href={route('organizations.index')}
-                  active={route().current('organizations.index')}
-                >
-                  Organizations
-                </NavLink>
-                {/if}
-                <NavLink
-                  href={route('jobs.management.index')}
-                  active={route().current('jobs.management.index')}
-                >
-                  Jobs
-                </NavLink>
-                <NavLink
-                  href={route('candidates.index')}
-                  active={route().current('candidates.index')}
-                >
-                  Candidates
-                </NavLink>
-              {:else}
-                <NavLink
-                  href={route('jobs.index')}
-                  active={route().current('jobs.index')}
-                >
-                  Jobs
-                </NavLink>
-              {/if}
               <NavLink
-                href={route('applications.index')}
-                active={route().current('applications.index')}
+                href={'dashboard'}
+                active={route().current('dashboard')}
               >
-                Applications
+                Dashboard
               </NavLink>
             </div>
           </div>
@@ -168,44 +135,11 @@
         class:hidden={!showingNavigationDropdown}
       >
         <div class="space-y-1 pb-3 pt-2">
-          {#if $user.role !== 'candidate'}
-            <ResponsiveNavLink
-              href={route('employers.index')}
-              active={route().current('employers.index')}
-            >
-              Employers
-            </ResponsiveNavLink>
-            <ResponsiveNavLink
-              href={route('organizations.index')}
-              active={route().current('organizations.index')}
-            >
-              Organizations
-            </ResponsiveNavLink>
-            <ResponsiveNavLink
-              href={route('jobs.management.index')}
-              active={route().current('jobs.management.index')}
-            >
-              Jobs
-            </ResponsiveNavLink>
-            <ResponsiveNavLink
-              href={route('candidates.index')}
-              active={route().current('candidates.index')}
-            >
-              Candidates
-            </ResponsiveNavLink>
-          {:else}
-            <ResponsiveNavLink
-              href={route('jobs.index')}
-              active={route().current('jobs.index')}
-            >
-              Jobs
-            </ResponsiveNavLink>
-          {/if}
           <ResponsiveNavLink
-            href={route('applications.index')}
-            active={route().current('applications.index')}
+            href={route('dashboard')}
+            active={route().current('dashboard')}
           >
-            Applications
+            Dashboard
           </ResponsiveNavLink>
         </div>
 
