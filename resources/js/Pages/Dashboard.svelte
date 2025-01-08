@@ -2,9 +2,7 @@
   import Button from '$components/Actions/Button.svelte';
   import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
-  import { user } from '$lib/inertia';
 
-  console.log(user);
 </script>
 
 <svelte:head>

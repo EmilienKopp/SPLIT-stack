@@ -4,7 +4,7 @@ interface HighlightPosition {
   class: string;
 }
 
-export class FilterService {
+export class Highlighter {
 
   public static Fuzzy(target: object | Array<string>, searchQuery: string) {
     let targetString = "";
@@ -14,7 +14,7 @@ export class FilterService {
       targetString = target.join(" ");
     }
 
-    return FilterService.fuzzyMatch(targetString, searchQuery)
+    return Highlighter.fuzzyMatch(targetString, searchQuery)
   }
 
   public static Exact(candidate: any, searchQuery: string) {
@@ -50,7 +50,7 @@ export class FilterService {
   }
 
   public static exactHighlight(targetString: string, searchString: string, highlightClass?: string) {
-    const safe = FilterService.htmlSafe(targetString);
+    const safe = Highlighter.htmlSafe(targetString);
 
     const start = safe?.toLowerCase()?.indexOf(searchString?.toLowerCase());
     const end = start + searchString?.length;
@@ -65,7 +65,7 @@ export class FilterService {
   }
 
   public static exactHighlightFromArray(targetString: string, searchStrings: string[], highlightClass?: string) {
-    let result = FilterService.htmlSafe(targetString);
+    let result = Highlighter.htmlSafe(targetString);
     let resultArray = targetString.split('');
     // check that any of the search strings are in the target string, and highlight them
     searchStrings.forEach(searchString => {
@@ -88,9 +88,9 @@ export class FilterService {
     type: "fuzzy" | "exact" = "exact") {
     switch (type) {
       case "fuzzy":
-        return FilterService.fuzzyHighlight(targetString, searchString, highlightClass);
+        return Highlighter.fuzzyHighlight(targetString, searchString, highlightClass);
       case "exact":
-        return FilterService.exactHighlight(targetString, searchString, highlightClass);
+        return Highlighter.exactHighlight(targetString, searchString, highlightClass);
     }
   }
 
@@ -101,7 +101,7 @@ export class FilterService {
     type: "fuzzy" | "exact" = "fuzzy"
   ) {
     const positions: HighlightPosition[] = [];
-    const cleanTarget = FilterService.htmlSafe(targetString.toString());
+    const cleanTarget = Highlighter.htmlSafe(targetString.toString());
 
     // First collect all positions that need highlighting
     for (let i = 0; i < searchStrings.length; i++) {

@@ -8,7 +8,6 @@ import { resolveNestedValue } from './objects';
  * @param {string} key - The key to group the objects by. Supports nested keys using dot notation.
  * @returns {Record<string, T[]>} - An object where each key is a group and the value is an array of objects that belong to that group.
  */
-
 export function groupBy<T>(
   arr: Record<string, T>[],
   key: string
