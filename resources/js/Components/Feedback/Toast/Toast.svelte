@@ -33,8 +33,12 @@
     }
 
     onMount(() => {
+    if ($page.props.flash) {
+      toaster.fromFlash($page.props.flash);
+    } else { 
         toaster.hide();
-    });
+    }
+  });
 
     onDestroy(() => {
         toaster.hide();

@@ -1,23 +1,5 @@
 import type { ToastOptions, ToastType } from './types';
 
-
-/**
- * The toast handler singleton.
- * This can be used to display toast notifications throughout the application.
- *
- * @constant
- * @type {ToastHandler}
- * @member {boolean} showing - Whether the toast is currently showing.
- * @member {string} message - The message to display in the toast.
- * @member {ToastType} type - The type of toast to display.
- * 
- * @method {success} - Display a success toast.
- * @method {error} - Display an error toast.
- * @method {info} - Display an info toast.
- */
-export const toaster = createToastHandler();
-
-
 class ToastHandler {
   #show = $state(false);
   message = $state('');
@@ -26,24 +8,48 @@ class ToastHandler {
     color: 'blue',
     duration: 3000,
     position: 'top-right',
-    class: ''
+    class: '',
   });
 
-  constructor() { }
+  constructor() {}
 
   public get showing() {
     return this.#show;
   }
 
-  private show(message: string, type: ToastType, options: Partial<ToastOptions> = {}) {
+  public show(
+    message: string,
+    type: ToastType,
+    options: Partial<ToastOptions> = {}
+  ) {
     this.options = options;
     this.message = message;
     this.type = type;
     this.#show = true;
     setTimeout(() => {
       this.hide();
-      console.log(this);
     }, this.options.duration);
+  }
+
+  /**
+   * Displays a toast notification with the specified message and options.
+   * Assumes the backed returns only one of the possible toast types as flash.
+   * @param {string} message - The message to display in the toast notification.
+   * @param {ToastType} type - The type of toast notification to display.
+   * @param {Partial<ToastOptions>} [options] - Optional settings to customize the toast notification.
+   * @param {string} [options.color='blue'] - The color of the toast notification.
+   * @param {number} [options.duration=3000] - The duration in milliseconds for which the toast notification is displayed.
+   * @param {string} [options.position='top-right'] - The position on the screen where the toast notification appears.
+   */
+  public fromFlash(flashData: Record<ToastType, string>) {
+    setTimeout(() => {
+      const entries = Object.entries(flashData);
+      if (entries.length === 0) return;
+      const firstEntry = entries.find(([type, message]) => message?.length);
+      if (!firstEntry) return;
+      const [type, message] = firstEntry;
+      this.show(message, type as ToastType, { duration: 5000 });
+    }, 500);
   }
 
   /**
@@ -61,10 +67,9 @@ class ToastHandler {
       duration: 3000,
       position: 'top-right',
       ...options,
-    }
+    };
     this.show(message, 'success', { color: 'green', ...options });
   }
-
 
   /**
    * Displays an error toast notification with the specified message and options.
@@ -81,7 +86,7 @@ class ToastHandler {
       duration: 3000,
       position: 'top-right',
       ...options,
-    }
+    };
     this.show(message, 'error', { color: 'red', ...options });
   }
 
@@ -100,7 +105,7 @@ class ToastHandler {
       duration: 3000,
       position: 'top-right',
       ...options,
-    }
+    };
     this.show(message, 'info', { color: 'blue', ...options });
   }
 
@@ -116,3 +121,19 @@ class ToastHandler {
 function createToastHandler() {
   return new ToastHandler();
 }
+
+/**
+ * The toast handler singleton.
+ * This can be used to display toast notifications throughout the application.
+ *
+ * @constant
+ * @type {ToastHandler}
+ * @member {boolean} showing - Whether the toast is currently showing.
+ * @member {string} message - The message to display in the toast.
+ * @member {ToastType} type - The type of toast to display.
+ *
+ * @method {success} - Display a success toast.
+ * @method {error} - Display an error toast.
+ * @method {info} - Display an info toast.
+ */
+export const toaster = createToastHandler();
