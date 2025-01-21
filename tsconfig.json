@@ -30,12 +30,12 @@
             "$models": [
                 "./resources/js/models.d.ts"
             ],
-            "$layouts": [
+            "$layouts/*": [
                 "./resources/js/Layouts/*"
             ],
-            "$pages": [
+            "$pages/*": [
                 "./resources/js/Pages/*"
-            ],
+            ]
         }
     },
     "include": [
