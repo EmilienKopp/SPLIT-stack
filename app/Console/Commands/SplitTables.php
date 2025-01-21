@@ -7,59 +7,59 @@ use Illuminate\Support\Str;
 
 class SplitTables extends Command
 {
-    protected $signature = 'split:tables 
+  protected $signature = 'split:tables 
                           {model : The name of the model}
                           {roles* : The roles to generate strategies for}';
 
-    protected $description = 'Create a domain context and strategies for a model';
+  protected $description = 'Create a domain context and strategies for a model';
 
-    protected $basePath = 'resources/js/Lib/domain';
+  protected $basePath = 'resources/js/Lib/domain';
 
-    public function handle()
-    {
-        $model = $this->argument('model');
-        $roles = $this->argument('roles');
+  public function handle()
+  {
+    $model = $this->argument('model');
+    $roles = $this->argument('roles');
 
-        // Create domain directory
-        $domainPath = $this->createDomainDirectory($model);
+    // Create domain directory
+    $domainPath = $this->createDomainDirectory($model);
 
-        // Generate context
-        $this->generateContext($model, $roles, $domainPath);
+    // Generate context
+    $this->generateContext($model, $roles, $domainPath);
 
-        // Generate strategies
-        foreach ($roles as $role) {
-            $this->generateStrategy($model, $role, $domainPath);
-        }
-
-        $this->info('Domain context and strategies generated successfully!');
+    // Generate strategies
+    foreach ($roles as $role) {
+      $this->generateStrategy($model, $role, $domainPath);
     }
 
-    protected function createDomainDirectory($model)
-    {
-        $domainPath = base_path($this->basePath . '/' . Str::ucfirst($model));
-        $strategiesPath = $domainPath . '/strategies';
+    $this->info('Domain context and strategies generated successfully!');
+  }
 
-        if (!is_dir($domainPath)) {
-            mkdir($domainPath, 0755, true);
-        }
+  protected function createDomainDirectory($model)
+  {
+    $domainPath = base_path($this->basePath . '/' . Str::ucfirst($model));
+    $strategiesPath = $domainPath . '/strategies';
 
-        if (!is_dir($strategiesPath)) {
-            mkdir($strategiesPath, 0755, true);
-        }
-
-        return $domainPath;
+    if (!is_dir($domainPath)) {
+      mkdir($domainPath, 0755, true);
     }
 
-    protected function generateContext($model, $roles, $domainPath)
-    {
-        $modelName = Str::studly($model);
-        $contextPath = $domainPath . '/context.ts';
+    if (!is_dir($strategiesPath)) {
+      mkdir($strategiesPath, 0755, true);
+    }
 
-        $imports = $this->generateContextImports($model, $roles);
-        
-        $strategySwitch = $this->generateStrategySwitch($roles, $model);
+    return $domainPath;
+  }
 
-        $template = <<<TS
+  protected function generateContext($model, $roles, $domainPath)
+  {
+    $modelName = Str::studly($model);
+    $contextPath = $domainPath . '/context.ts';
+
+    $imports = $this->generateContextImports($model, $roles);
+
+    $strategySwitch = $this->generateStrategySwitch($roles, $model);
+
+    $template = <<<TS
 $imports
 
 export class {$modelName}TableContext implements TableContext<$modelName> {
@@ -78,20 +78,23 @@ $strategySwitch
   }
 }
 TS;
-
-        file_put_contents($contextPath, $template);
-        $this->info("Generated context at: $contextPath");
+    if (!file_exists($contextPath)) {
+      file_put_contents($contextPath, $template);
+      $this->info("Generated context at: $contextPath");
+    } else {
+      $this->warn("Context already exists at: $contextPath");
     }
+  }
 
-    protected function generateStrategy($model, $role, $domainPath)
-    {
-        $modelName = Str::studly($model);
-        $roleName = Str::studly($role);
-        $routeModel = Str::kebab($model);
-        $strategyPath = $domainPath . '/strategies/' . Str::camel($role) . Str::studly($model) . 'Strategy.ts';
+  protected function generateStrategy($model, $role, $domainPath)
+  {
+    $modelName = Str::studly($model);
+    $roleName = Str::studly($role);
+    $routeModel = Str::kebab($model);
+    $strategyPath = $domainPath . '/strategies/' . Str::camel($role) . Str::studly($model) . 'Strategy.ts';
 
-        $template = <<<TS
-import { TableAction, TableStrategy } from "\$types/components/Table";
+    $template = <<<TS
+import { TableAction, TableStrategy } from "\$types/common/table";
 import { $modelName } from "\$models";
 import { date } from "\$lib/utils/formatting";
 
@@ -118,44 +121,47 @@ export class {$roleName}{$modelName}TableStrategy implements TableStrategy<$mode
   }
 }
 TS;
+    if (!file_exists($strategyPath)) {
+      file_put_contents($strategyPath, $template);
+      $this->info("Generated strategy at: $strategyPath");
+    } else {
+      $this->warn("Strategy already exists at: $strategyPath");
+    }
+  }
 
-        file_put_contents($strategyPath, $template);
-        $this->info("Generated strategy at: $strategyPath");
+  protected function generateContextImports($model, $roles)
+  {
+    $modelName = Str::studly($model);
+    $imports = [];
+
+    // Add strategy imports
+    foreach ($roles as $role) {
+      $roleName = Str::studly($role);
+      $strategyName = "{$roleName}{$modelName}TableStrategy";
+      $imports[] = "import { $strategyName } from './strategies/" . Str::camel($role) . Str::studly($model) . "Strategy';";
     }
 
-    protected function generateContextImports($model, $roles)
-    {
-        $modelName = Str::studly($model);
-        $imports = [];
+    // Add other necessary imports
+    $imports[] = "import { $modelName } from '\$models';";
+    $imports[] = "import { TableContext } from '../common/context';";
+    $imports[] = "import { TableStrategy } from '\$types/common/table';";
 
-        // Add strategy imports
-        foreach ($roles as $role) {
-            $roleName = Str::studly($role);
-            $strategyName = "{$roleName}{$modelName}TableStrategy";
-            $imports[] = "import { $strategyName } from './strategies/" . Str::camel($role) . Str::studly($model) . "Strategy';";
-        }
+    return implode("\n", $imports);
+  }
 
-        // Add other necessary imports
-        $imports[] = "import { $modelName } from '\$models';";
-        $imports[] = "import { TableContext } from '../common/context';";
-        $imports[] = "import { TableStrategy } from '\$types/components/Table';";
+  protected function generateStrategySwitch($roles, $model)
+  {
+    $modelName = Str::studly($model);
+    $cases = [];
 
-        return implode("\n", $imports);
-    }
-
-    protected function generateStrategySwitch($roles, $model)
-    {
-        $modelName = Str::studly($model);
-        $cases = [];
-
-        foreach ($roles as $role) {
-            $roleName = Str::studly($role);
-            $cases[] = <<<TS
+    foreach ($roles as $role) {
+      $roleName = Str::studly($role);
+      $cases[] = <<<TS
       case '$role':
         return new {$roleName}{$modelName}TableStrategy();
 TS;
-        }
-
-        return implode("\n", $cases);
     }
+
+    return implode("\n", $cases);
+  }
 }

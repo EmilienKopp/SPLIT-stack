@@ -13,17 +13,6 @@ export type TableHeader<T, V = any> = {
   filterHandler?: (row: T, form: InertiaForm<any>) => boolean;
 };
 
-/**
- * TableAction interface
- * @param label - The label of the action.
- * @param callback - The callback function to execute when the action is clicked.
- * @disabled - The disabled function to determine if the action is disabled.
- * @icon - The icon function to determine the icon of the action. Could return a Component.
- * @css - The css function to determine the css class of the action.
- * @hidden - The hidden function to determine if the action is hidden.
- * @href - The href function to determine the href of the action.
- * @position - The position of the action in the list [start at 1]
- */
 export type TableAction<T> = {
   label: string;
   callback?: (row: T) => void;

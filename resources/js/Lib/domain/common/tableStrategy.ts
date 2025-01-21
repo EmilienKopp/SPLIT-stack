@@ -1,4 +1,4 @@
-import type { TableAction, TableHeader } from '$types/components/Table';
+import type { TableAction, TableHeader } from '$types/common/table';
 
 /**
  * A type that extends a given type T with an optional index property.
