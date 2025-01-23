@@ -5,7 +5,7 @@
     label?: string;
     name: string;
     required?: boolean;
-    value?: string | number | File | null;
+    value?: string | number | File | null | Date;
     errors?: Record<string, string>;
     type?: 'text' | 'number' | 'file' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'date' | 'time' | 'datetime-local' | 'month' | 'week' | 'color';
     oninput?: (e: Event) => void;
@@ -17,7 +17,7 @@
     label = '',
     name,
     required = false,
-    value = $bindable(''),
+    value = $bindable(),
     errors = {},
     type = 'text',
     onchange,
@@ -26,7 +26,7 @@
   }: Props = $props();
 </script>
 
-<div class="form-control w-full mb-4">
+<div class="form-control w-full">
   {#if label}
     <InputLabel for={rest.id} {required}>{label}</InputLabel>
   {/if}
