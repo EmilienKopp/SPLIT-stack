@@ -5,7 +5,7 @@
 <script lang="ts">
   import DeleteButton from '$components/Display/DeleteButton.svelte';
   import DownloadLink from '$components/Navigation/DownloadLink.svelte';
-  import { MediaHandler, type MediaForm, type MediaFormCollection, type MediaProp } from '$lib/domain/media/index';
+  import { MediaHandler, type MediaForm, type MediaFormCollection, type MediaProp } from '$lib/domains/media/index';
   import { superUseForm } from '$lib/inertia/index';
   import { props } from '$lib/stores';
   import { twMerge } from 'tailwind-merge';

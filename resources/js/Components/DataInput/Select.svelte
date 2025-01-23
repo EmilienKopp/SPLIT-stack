@@ -5,10 +5,11 @@
   import { createEventDispatcher } from 'svelte';
   import { twMerge } from 'tailwind-merge';
   interface Props {
-    label: Props['label'];
+    label?: string;
     options?: Option[];
-    value: Props['value'];
+    value: any;
     placeholder?: string;
+    onchange?: (e: Event) => void;
     [key: string]: any
   }
 
@@ -17,23 +18,18 @@
     options = [],
     value = $bindable(),
     placeholder = 'Select something',
+    onchange,
     ...rest
   }: Props = $props();
 
   interface Option {
-    value: string | number;
+    value: any;
     name: string;
-  }
-
-  interface Props {
-    label: string;
-    options: Option[];
-    value: string | number;
   }
 
 </script>
 
-<div class="form-control w-full mb-4">
+<div class="form-control">
   {#if label}
     <label class="label" for={rest.id}>
       <span class="label-text">{label}</span>
@@ -43,7 +39,7 @@
     class={twMerge('select select-bordered', rest.class)}
     {...rest}
     bind:value
-    onchange={bubble('change')}
+    onchange={(e) => onchange?.(e)}
   >
     {#if placeholder && !value}
       <option value="" disabled selected>{placeholder}</option>
