@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
-  import { exists } from '$lib/utils/assessing';
-  import { query } from '$lib/stores/global/query.svelte';
   import { twMerge } from 'tailwind-merge';
   import TableActions from './Action.svelte';
   import TableCell from './Cell.svelte';
   import TableHeader from './Header.svelte';
   import Pagination from './Pagination.svelte';
+  import { query } from '$lib/stores/global/query.svelte';
+  import type { Paginated } from '$types/pagination';
 
   let {
     data = undefined,
@@ -22,22 +20,11 @@
     searchStrings = $bindable([]),
   }: Props = $props();
 
-  let tableData: any[] = $state(data);
-
   if (!searchStrings?.length && query.param('search')) {
     searchStrings = [query.param('search')?.toString() || ''];
   }
 
   let pageIndex = $derived(query.param('page') || 1);
-
-  run(() => {
-    if (paginated) {
-      tableData = data?.data ?? paginatedData?.data ?? [];
-    }
-    if (paginatedData && data?.length) {
-      throw new Error('Cannot use both data and paginatedData props');
-    }
-  });
 
   let hasActions = $derived(Boolean(onDelete || actions?.length));
 </script>
@@ -57,7 +44,7 @@
   }
 </style>
 
-{#if tableData?.length === 0}
+{#if Array.isArray(data) ? data.length === 0 : data?.data?.length === 0}
   <div class="text-center text-gray-500 p-4">No data available</div>
 {:else}
   <div class="overflow-x-auto shadow-md rounded-lg">
@@ -65,9 +52,8 @@
       <thead>
         <TableHeader {headers} {hasActions} />
       </thead>
-
       <tbody>
-        {#each tableData ?? [] as row}
+        {#each (Array.isArray(data) ? data : (data?.data ?? [])) as row (row?.id)}
           <tr
             class={twMerge(
               'hover:bg-base-300 transition-colors duration-200',
@@ -87,7 +73,10 @@
     </table>
   </div>
 
-  {#if paginated || paginatedData?.length || exists(data?.data)}
-    <Pagination paginatedData={data} pageIndex={Number(pageIndex)} />
+  {#if paginated && data}
+    <Pagination
+      paginatedData={data as Paginated<any>}
+      pageIndex={Number(pageIndex)}
+    />
   {/if}
 {/if}
