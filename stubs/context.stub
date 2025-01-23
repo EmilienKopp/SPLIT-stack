@@ -1,5 +1,5 @@
 import { BaseDataDisplayStrategy } from '$lib/base/strategies/dataDisplayStrategy';
-import { Context } from '$lib/base/contexts/context';
+import { Context } from '$lib/core/contexts/context';
 import { {{ model }} } from '$models';
 
 export class {{ model }}Context implements Context<{{ model }}> {
