@@ -1,0 +1,19 @@
+import { BaseDataDisplayStrategy } from '$lib/base/strategies/dataDisplayStrategy';
+import { Context } from '$lib/base/contexts/context';
+import { {{ model }} } from '$models';
+
+export class {{ model }}Context implements Context<{{ model }}> {
+  strategy: BaseDataDisplayStrategy<{{ model }}>;
+
+  constructor(role: string) {
+    this.strategy = this.getStrategyForRole(role);
+  }
+
+  getStrategyForRole(role: string): BaseDataDisplayStrategy<{{ model }}> {
+    switch (role) {
+{{ strategy_cases }}
+      default:
+        return new Default{{ model }}DataDisplayStrategy();
+    }
+  }
+} 
