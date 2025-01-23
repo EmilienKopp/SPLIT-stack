@@ -1,28 +1,15 @@
 <script lang="ts">
-  import type { TableHeader } from "../../types/components/Table";
+  import { resolveNestedValue } from '$lib/utils/objects';
+  import type { DataHeader } from '$types/common/dataDisplay';
 
   interface Props {
-    headers: TableHeader<any>[];
-    data: Record<string,any>;
+    headers: DataHeader<any>[];
+    data?: Record<string, any>;
+    editable?: boolean; //TODO: Implement inline editing
   }
 
-  let { headers, data }: Props = $props();
+  let { headers, data, editable = false }: Props = $props();
 </script>
-
-<dl>
-  {#each headers as { key, label, formatter }}
-    <dt>{label}:</dt>
-    {#if data?.[key] === true}
-      <dd>Yes</dd>
-    {:else if data?.[key] === false}
-      <dd>No</dd>
-    {:else if data?.[key] !== null && data?.[key] !== undefined}
-      <dd>{formatter ? formatter(data[key]) : data[key]}</dd>
-    {:else}
-      <dd> - </dd>
-    {/if}
-  {/each}
-</dl>
 
 <style>
   dl {
@@ -35,3 +22,19 @@
     font-weight: bold;
   }
 </style>
+
+<dl>
+  {#each headers as { key, label, formatter }}
+    {@const resolved = resolveNestedValue(data, key)}
+    <dt>{label}:</dt>
+    {#if resolved === true}
+      <dd>Yes</dd>
+    {:else if resolved === false}
+      <dd>No</dd>
+    {:else if resolved !== null && resolved !== undefined}
+      <dd>{formatter ? formatter(resolved) : resolved}</dd>
+    {:else}
+      <dd>-</dd>
+    {/if}
+  {/each}
+</dl>
