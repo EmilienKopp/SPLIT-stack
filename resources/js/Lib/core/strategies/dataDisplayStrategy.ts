@@ -3,7 +3,7 @@ import type { DataAction, DataHeader, ExtendedAction, ExtendedHeader } from '$ty
 /**
  * Abstract base class for table strategies.
  */
-export abstract class BaseTableStrategy<T> {
+export abstract class BaseDataDisplayStrategy<T> {
   /**
    * Returns the default headers for the table.
    */
