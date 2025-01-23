@@ -10,6 +10,7 @@
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
   import { RoleContext } from '$lib/stores/global/roleContext.svelte';
+  import RoleSwitcher from '$components/UI/RoleSwitcher.svelte';
   interface Props {
     header?: import('svelte').Snippet;
     children?: import('svelte').Snippet;
@@ -20,7 +21,7 @@
   let showingNavigationDropdown = $state(false);
   let supportsViewTransitions = false;
 
-  let context = $state(new NavigationContext(RoleContext.selected));
+  let context = $derived(new NavigationContext(RoleContext.selected));
   let navigationElements = $derived(context.strategy.navigationElements());
 
   onMount(() => {
@@ -72,7 +73,12 @@
             </div>
           </div>
 
+          
+
           <div class="hidden sm:ms-6 sm:flex sm:items-center">
+            <div class="w-44 flex items-center justify-end">
+              <RoleSwitcher />
+            </div>
             <!-- Settings Dropdown -->
             <div class="ms-3">
               <Dropdown actions={settingsDropdownActions}>

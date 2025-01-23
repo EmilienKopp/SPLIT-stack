@@ -6,6 +6,7 @@
 
   RoleContext.selected = getUserRoleName();
   RoleContext.available = getAllUserRoles();
+  $inspect(RoleContext.selected);
 </script>
 
 <div class="form-control w-full max-w-xs">
