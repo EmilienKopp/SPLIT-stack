@@ -1,5 +1,5 @@
 import { DataAction, IDataStrategy } from '$types/common/dataDisplay';
-import { BaseDataDisplayStrategy } from '$lib/base/strategies/dataDisplayStrategy';
+import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
 import { {{ model }} } from '$models';
 import { date } from '$lib/utils/formatting';
 
