@@ -1,13 +1,13 @@
 <script lang="ts">
   import { self } from 'svelte/legacy';
 
-  import { FilterService } from '$lib/utils/highlight';
+  import { Highlighter } from '$lib/utils/highlight';
   import { resolveNestedValue } from '$lib/utils/objects';
-  import type { TableHeader } from '$types/components/Table';
+  import type { DataHeader } from '$types/common/dataDisplay';
 
   interface Props {
     row: any;
-    header: TableHeader<any>;
+    header: DataHeader<any>;
     searchStrings?: string[];
     onRowClick?: ((row: any) => void) | undefined;
   }
@@ -45,7 +45,7 @@
         {@const formatted = header.formatter ? header.formatter(value) : value}
         {#if searchStrings?.length && typeof formatted === 'string' && header.searchable}
           <p>
-            {@html FilterService.highlightMany(
+            {@html Highlighter.highlightMany(
               formatted,
               searchStrings,
               ['bg-yellow-100', 'bg-blue-100'],
