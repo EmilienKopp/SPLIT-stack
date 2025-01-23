@@ -1,5 +1,9 @@
-import { BaseDataDisplayStrategy } from '$lib/base/strategies/dataDisplayStrategy';
-import { Context } from '$lib/base/contexts/context';
+import { AdminProjectTableStrategy } from './strategies/adminProjectTableStrategy';
+import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
+import { Context } from '$lib/core/contexts/context';
+import { DefaultProjectTableStrategy } from './strategies/defaultProjectTableStrategy';
+import { EmployerProjectDataDisplayStrategy } from './strategies/employerProjectTableStrategy';
+import { FreelancerProjectDataDisplayStrategy } from './strategies/freelancerProjectTableStrategy';
 import { Project } from '$models';
 
 export class ProjectContext implements Context<Project> {
@@ -14,11 +18,11 @@ export class ProjectContext implements Context<Project> {
       case 'admin':
         return new AdminProjectTableStrategy();
       case 'freelancer':
-        return new FreelancerProjectTableStrategy();
+        return new FreelancerProjectDataDisplayStrategy();
       case 'employer':
-        return new EmployerProjectTableStrategy();
+        return new EmployerProjectDataDisplayStrategy();
       default:
-        return new DefaultProjectDataDisplayStrategy();
+        return new DefaultProjectTableStrategy();
     }
   }
 } 

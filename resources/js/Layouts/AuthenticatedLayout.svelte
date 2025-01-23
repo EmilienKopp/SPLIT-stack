@@ -4,10 +4,12 @@
   import Toast from '$components/Feedback/Toast/Toast.svelte';
   import NavLink from '$components/Navigation/NavLink.svelte';
   import ResponsiveNavLink from '$components/Navigation/ResponsiveNavLink.svelte';
+  import { NavigationContext } from '$lib/core/contexts/navigationContext';
   import { user } from '$lib/stores';
   import { Link, page } from '@inertiajs/svelte';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+  import { RoleContext } from '$lib/stores/global/roleContext.svelte';
   interface Props {
     header?: import('svelte').Snippet;
     children?: import('svelte').Snippet;
@@ -17,6 +19,9 @@
 
   let showingNavigationDropdown = $state(false);
   let supportsViewTransitions = false;
+
+  let context = $state(new NavigationContext(RoleContext.selected));
+  let navigationElements = $derived(context.strategy.navigationElements());
 
   onMount(() => {
     supportsViewTransitions = 'startViewTransition' in document;
@@ -56,12 +61,14 @@
             <div
               class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center"
             >
-              <NavLink
-                href={'dashboard'}
-                active={route().current('dashboard')}
-              >
-                Dashboard
-              </NavLink>
+              {#each navigationElements as element}
+                <NavLink
+                  href={element.href}
+                  active={route().current(element.href)}
+                >
+                  {element.name}
+                </NavLink>
+              {/each}
             </div>
           </div>
 
@@ -135,12 +142,14 @@
         class:hidden={!showingNavigationDropdown}
       >
         <div class="space-y-1 pb-3 pt-2">
-          <ResponsiveNavLink
-            href={route('dashboard')}
-            active={route().current('dashboard')}
-          >
-            Dashboard
-          </ResponsiveNavLink>
+          {#each navigationElements as element}
+            <ResponsiveNavLink
+              href={element.href}
+              active={route().current(element.href)}
+            >
+              {element.name}
+            </ResponsiveNavLink>
+          {/each}
         </div>
 
         <!-- Responsive Settings Options -->

@@ -1,12 +1,11 @@
 import { DataAction, IDataStrategy } from '$types/common/dataDisplay';
-
 import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
-import { Project } from '$models';
+import { Organization } from '$models';
 import { date } from '$lib/utils/formatting';
 
-export class AdminProjectTableStrategy 
-  extends BaseDataDisplayStrategy<Project> 
-  implements IDataStrategy<Project>
+export class FreelancerOrganizationDataDisplayStrategy 
+  extends BaseDataDisplayStrategy<Organization> 
+  implements IDataStrategy<Organization>
 {
   protected defaultHeaders() {
     return [
@@ -16,15 +15,15 @@ export class AdminProjectTableStrategy
     ];
   }
 
-  protected defaultActions(): DataAction<Project>[] {
+  protected defaultActions(): DataAction<Organization>[] {
     return [
       {
         label: 'View',
-        href: (row: Project) => route('project.show', row.id),
+        href: (row: Organization) => route('organization.show', row.id),
       },
       {
         label: 'Edit',
-        href: (row: Project) => route('project.edit', row.id),
+        href: (row: Organization) => route('organization.edit', row.id),
       },
     ];
   }
