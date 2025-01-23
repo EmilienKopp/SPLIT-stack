@@ -10,12 +10,12 @@ export class FreelancerNavigationStrategy implements INavigationStrategy<Navigat
       },
       {
         name: 'Projects',
-        href: route('projects.index'),
+        href: route('project.index'),
         active: false,
       },
       {
         name: 'Organizations',
-        href: route('organizations.index'),
+        href: route('organization.index'),
         active: false,
       },
     ];

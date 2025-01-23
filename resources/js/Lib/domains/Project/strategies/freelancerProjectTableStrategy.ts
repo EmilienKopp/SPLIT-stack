@@ -10,7 +10,7 @@ export class FreelancerProjectDataDisplayStrategy
 {
   protected defaultHeaders() {
     return [
-      { label: 'Name', key: 'name' },
+      { label: 'Name', key: 'name', searchable: true },
       { label: 'Created At', key: 'created_at', formatter: date },
       { label: 'Updated At', key: 'updated_at', formatter: date },
     ];
