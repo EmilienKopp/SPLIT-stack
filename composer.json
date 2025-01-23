@@ -19,6 +19,7 @@
         "laravel/tinker": "^2.9",
         "php-http/curl-client": "^2.3",
         "spatie/laravel-medialibrary": "^11.11",
+        "spatie/laravel-permission": "^6.10",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
