@@ -2,396 +2,172 @@
 
 <p align="center">
   <strong>Svelte • PostgreSQL • Laravel • Inertia • TypeScript</strong><br>
-  A modern, type-safe, multi-context web application stack for rapid development
+  A modern, type-safe, multi-context web application stack for rapid development.
 </p>
 
-🏗️ Full-stack type safety from database to UI using TypeScript and automated type generation
+## Overview
 
-🎭 Built-in role-based context switching with strategy pattern implementation
+🏗️ **Full-stack Type Safety**: From database to UI using TypeScript and automated type generation  
+🎭 **Role-Based Architecture**: Built-in context switching with strategy pattern implementation  
+⚡ **Modern Tech Stack**: Svelte, Laravel, PostgreSQL, Inertia.js  
+🏃‍♂️ **Developer Experience**: Rapid development with extensive code scaffolding  
+🎨 **Clean Architecture**: Clear separation of concerns and domain-driven design
+🔋 **Battery Included**: Comes with many common but customizable components (tables, filter search, ...) and utilities (toasts, array helpers, ...)
+💎 **Modern Monolith**: Hostable one one machine or containerized. No more complex web of microservices or BaaS latency.
 
-⚡ Modern tech stack: Svelte, Laravel, PostgreSQL, Inertia.js
+## Why SPLIT Stack?
 
-🏃‍♂️ Rapid development with extensive code scaffolding commands
+### The Return to Productive Simplicity
 
-🎨 Clean DDD architecture with clear separation of concerns
+Tired of cloud complexity and microservice overhead? 
 
-🔄 Context-aware components that adapt to user roles
+Tired of spending more time on infrastructure, cloud configuration, build errors, and other non-productivity issues?
 
-🍞 Out-of-the-box toast notifications with flash message handling
+SPLIT Stack embraces a return to productive, maintainable monoliths while keeping modern developer experience:
 
-📦 Pre-configured development environment with Docker
+- No complex cloud infrastructure to manage
+- No microservices to orchestrate
+- No BaaS vendor lock-in
+- Just a clean, powerful stack you fully control
+- Fully open-source and free
 
-
-
-<!-- 🛠️ Comprehensive tooling (ESLint, Prettier, Vite, etc.) -->
-
-## Disclaimer
-
-SPLIT Stack is a work in progress and still in a very early stage before a stable `v1.0.0` release.
-Feel free to engage with it, give me feedback, criticize, etc.
-Please keep in mind that it is a work in progress and not yet **TESTED AND READY** for production,
-though it could probably be used as a starting point for a new project.
-
-## 🎯 Use Cases
+## Is SPLIT Stack Right for You?
 
 SPLIT Stack is ideal for:
 - Applications with complex "multi-role users" requirements
-- Smaller teams who don't want to sacrifice architecture for speed
+- Small, composite teams who want to work fast with a clean basis to build on
 - CRUD-heavy applications
 - Freelancers/solopreneurs wanting to jumpstart a spaghetti-free project 🍝
+(or anyone who likes to get moving fast but wants to keep it clean)
 
-## 🌟 Features
+## Getting Started
 
-### Type Safety Everywhere
-- Full-stack type safety from database to UI
-- Automatic TypeScript interface generation from Laravel models
-- Inertia.js props typing for seamless backend-frontend communication
-
-### Role-Based Architecture
-- Built-in context switching based on user roles
-- Strategy pattern implementation for role-specific views and behaviors
-- Clean separation of concerns following DDD principles
-
-### Developer Experience
-- Comprehensive CLI tools for code generation
-- Pre-configured development environment
-- Hot module replacement
-- Automated code formatting and linting
-- Type-safe forms 
-
-### Performance
-- Server-side rendering capabilities
-- Efficient state management
-- Optimized asset bundling with Vite
-
-## 🚀 Quick Start
+### Quick Start
 
 1. Clone the repository
-```
+```bash
 git clone https://github.com/yourusername/split-stack
 ```
+
 2. Install dependencies
-```
+```bash
 composer install
 npm install
 ```
+
 3. Set up environment
-```
+```bash
 cp .env.example .env
 php artisan key:generate
 ```
-4. Start development servers
 
-```
+4. Start development servers
+```bash
 npm run start
 ```
 
-This should spin up docker containers, laravel server, and vite dev server.
+⚠️ Docker and docker-compose are required for the DB and pgAdmin.
 
-⚠️ You need to have docker and docker compose installed.
+### Stack Components
 
-
-## 📦 Stack Components
-
-- **Frontend**: Svelte + TypeScript
-- **Backend**: Laravel 11
-- **Database**: PostgreSQL
-- **API Layer**: Inertia.js
+- **Flexible, Fast Frontend**: Svelte + TypeScript
+- **Battle-tested Backend**: Laravel 11
+- **Reliable Database**: PostgreSQL
+- **The glue**: Inertia.js
 - **Build Tool**: Vite
 - **Styling**: TailwindCSS + DaisyUI
 
-## 🧠 Core Concepts
+## Technical Documentation
 
-### Domain-Driven Design
+### Core Features
 
+#### Type Safety System
+- Consistent types from Database to Backend to Frontend
+- Type-safe forms with runtime validation
+- Type-safe data passing between Laravel and Inertia
+- Route-safety for both Laravel and frontend
 
-DISCLAIMER: We are opinionated. But feel free to disagree! 
+#### Role Flexibility
+- Context switching based on user roles
+- Strategy pattern for role-specific behaviors
+- Zero conditional statements for role handling
+- Live role switching capability
 
-We consider that more often that not, grouping things by what **entity** (or domain, or model) is one 
-on the clearest way to structure your application (which doesn't exlude blending in other patterns like MVC, which ... we are doing anyway).
+#### Developer Experience
+- CLI tools for code generation
+- Pre-made components
+- Many convenient utilities (toasts, array helpers, Laravel Traits for common pain points)
+- Hot module replacement
+- Pre-configured DB containers
+- Automated code formatting and linting
 
-### Context-Aware Components
+### Understanding Inertia.js Integration
 
-To make pages or components context-aware (usually to respond to having different logic or views based on the user's role),
-we use the **strategy pattern**.
+Inertia.js connects your frontend and backend by:
+- Enabling Laravel to directly drive your Svelte frontend
+- Eliminating need for an actual API
+- Providing SPA behavior with monolith simplicity
+- Handling authentication and authorization seamlessly
 
-For each "domain" (e.g. `Projects`) we define **contexts** that you can decide to make wide or narrow down
-to a specific type of view (e.g. tables or datalists).
+Flow:
+1. User clicks a link
+2. Inertia makes XHR request
+3. Laravel controller returns data
+4. Svelte component displays data
+5. URL updates without page reload
 
-Each context will **need** to provide a `getStrategyForRole` method, but the implementation details are up to you (ususally a `switch` statement or a `map`).
-
-Each strategy will then define things like the kind of data to display (e.g. headers and action buttons of a table, or the data of a datalist).
-
-Code example (full,non-simplified!):
-
-```typescript
-// Provided in the SPLIT Stack
-import { Context } from '$lib/core/contexts/context';
-import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
-
-// Made available through type generation
-import { Project } from '$models';
-
-// Default strategy generated by the split:domain command
-import { DefaultProjectTableStrategy } from './strategies/defaultProjectTableStrategy';
-
-// Your strategies (the skeleton is provided by the split:domain command too)
-import { AdminProjectTableStrategy } from './strategies/adminProjectTableStrategy';
-import { EmployerProjectDataDisplayStrategy } from './strategies/employerProjectTableStrategy';
-import { FreelancerProjectDataDisplayStrategy } from './strategies/freelancerProjectTableStrategy';
-
-export class ProjectContext implements Context<Project> {
-  strategy: BaseDataDisplayStrategy<Project>;
-
-  constructor(role: string) {
-    this.strategy = this.getStrategyForRole(role);
-  }
-
-  getStrategyForRole(role: string): BaseDataDisplayStrategy<Project> {
-    switch (role) {
-      case 'admin':
-        return new AdminProjectTableStrategy();
-      case 'freelancer':
-        return new FreelancerProjectDataDisplayStrategy();
-      case 'employer':
-        return new EmployerProjectDataDisplayStrategy();
-      default:
-        return new DefaultProjectTableStrategy();
-    }
-  }
-} 
-```
-
-```typescript
-// Included with the batteries
-import type { DataAction, DataHeader, IDataStrategy } from '$types/common/dataDisplay';
-import {
-  BaseDataDisplayStrategy
-} from '$lib/core/strategies/dataDisplayStrategy';
-import { InertiaForm } from '$lib/inertia';
-
-// Models made available through type generation
-import { Project } from '..';
-
-// Yours
-import { Trash2 } from 'lucide-svelte';
-
-export class FreelancerProjectTableStrategy
-  extends BaseDataDisplayStrategy<Project> // BaseDataDisplayStrategy is provided by the SPLIT Stack
-  implements IDataStrategy<Project> // IDataStrategy is provided by the SPLIT Stack
-{
-  // defaultHeaders() is an abstract method that you need to implement
-  defaultHeaders(): DataHeader<Project>[] {
-    return [
-      { key: 'name', label: 'Name', searchable: true },
-      { key: 'description', label: 'Description', searchable: true },
-      { key: 'organization.name', label: 'Organization', searchable: true },
-    ];
-  }
-
-  // defaultActions() is an abstract method that you need to implement
-  defaultActions(): DataAction<Project>[] {
-    return [
-      { label: 'Edit', href: (row: Project) => route('project.edit', row.id) },
-      {
-        label: 'Delete',
-        callback: Project.delete,
-        css: () => 'text-red-500',
-        icon: () => Trash2,
-      },
-    ];
-  }
-}
-```
-
-
-
-This allows Pages that include tables or lists to be context-aware and adapt to the user's role easily.
-You can switch on the spot (we provide a `<RoleSwitcher/>` component for that!), 
-or just use it as DRYer way to define your components.
-
-Example component:
-```typescript
-<script lang="ts">
-  // Components/layouts provided out of the box
-  import DynamicFilterSearch from '$components/DataInput/DynamicFilterSearch.svelte';
-  import { DataTable } from '$components/Display/DataTable';
-  import Header from '$components/UI/Header.svelte';
-  import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
-  import RoleSwitcher from '$components/UI/RoleSwitcher.svelte';
-
-  // The global role context store is included
-  import { RoleContext } from '$lib/stores/global/roleContext.svelte';
-
-  // Contexts and strategies provided by the split:domain command
-  import { ProjectContext } from '$lib/domains/Project/context';
-
-  // Models made available through type generation
-  import type { Project } from '$models';
-
-  interface Props {
-    projects: Project[];
-  }
-
-  let { projects }: Props = $props();
-
-  let context = $derived(new ProjectContext(RoleContext.selected));
-  let headers = $derived(context.strategy.headers());
-  let actions = $derived(context.strategy.actions());
-
-  let q = $state('');
-  let filteredProjects = $state(projects);
-
-  function searchHandler (q: string) {
-    filteredProjects = projects.filter( 
-      // Your search logic here
-    );
-  };
-
-  function clearHandler () {
-    // Your clear logic here
-  }
-</script>
-
-<AuthenticatedLayout>
-  <Header>
-    <h1>Projects</h1>
-    <RoleSwitcher />
-    <div class="flex items-center gap-2 mx-auto">
-      <DynamicFilterSearch {searchHandler} {clearHandler} bind:q />
-    </div>
-  </Header>
-
-  <DataTable {headers} {actions} data={filteredProjects} searchStrings={[q]} />
-</AuthenticatedLayout>
-```
-
-That's it, your component is now context-aware and will adapt to the user's role (whether it is changing on the fly or not).
-
-Of course, no one is **forcing** you to use the strategy patterns if your requirements don't match.
-But we figured that for a good deal of CRUD-centered applications, it is a good way to keep your code clean and organized
-but still have the flexibility to adapt to the user's role.
-
-### Role Handling made simpler
-
-#### Made possible by:
-
-- A tweak to Inertia's `HandleInertiaRequests` middleware to include roles in the shared data
-- A `RoleContext` store that you can use to access the user's role or switch roles on the fly
-- A `RoleSwitcher` component if you need frontend role switching (e.g. one user has multiple roles)
-- A `NavigationContext` and strategies for you to define your available navigation options based on roles
-
-### 🍞 Toast it up
-
-#### From the Backend (Laravel Controller)
-
-The simplest way to show a toast is to use Laravel's flash methods in your controller.
-
-The frontend will automatically pick up the flash messages and display them as toast notifications.
-
-
-```php
-// Success message
-return redirect()->back()->with('success', 'Project created successfully!');
-// Error message
-return redirect()->back()->with('error', 'Something went wrong!');
-// Info message
-return redirect()->back()->with('info', 'Did you know you can switch roles?');
-```
-
-#### From the Frontend (Svelte)
-
-You can also trigger toasts directly from your Svelte components using the `toaster` singleton:
-
-```typescript
-// Included with the batteries
-<script lang="ts">
-import { toaster } from '$lib/stores/global/toaster.svelte';
-
-// on inertia form submits
-const form = superUseForm();
-
-function handleSubmit() {
-  $form.post(route('project.store'), {
-    onSuccess: () => {
-      toaster.success('🍞 Good job!');
-    },
-    onError: () => {
-      toaster.error('🍞 Something went wrong!');
-    }
-  });
-}
-</script>
-
-// onclick
-<Button onclick={() => toaster.info('🍞 Toasted!')}>
-```
-
-## 🛠️ Development / Quality of life Tools
-
-### Code Generation Commands
-
-#### Generate new component
-```
-// On our roadmap
-```
-
-#### Generate role-based strategies/contexts
-
-```
-php artisan split:tables ModelName role1 role2 role3
-```
-
-#### Generate new navigation strategy
-
-Because we all know that handling routes and navigation with role conditionals is a pain in the donkey.
-
-```
-php artisan split:navigation StrategyName
-```
-
-### Directory Structure
+### Code Organization
 
 ```
 ├── app/
-│ ├── Console/Commands/ # CLI tools
-│ ├── Http/Controllers/ # Laravel controllers
-│ └── Models/ # Laravel models
+│ ├── Console/Commands/    # CLI tools
+│ ├── Http/Controllers/    # Laravel controllers
+│ └── Models/             # Laravel models
 ├── resources/
 │ └── js/
-│ ├── Components/ # Svelte components
-│ ├── Layouts/ # Page layouts
-│ ├── Lib/ # Core utilities
-| | ├── navigation/ # Navigation strategies
-│ │ └── domains/ # Domain-specific logic
-│ └── Pages/ # Svelte pages
+│   ├── Components/       # Svelte components
+│   ├── Layouts/         # Page layouts
+│   ├── Lib/             # Core utilities
+│   │ ├── navigation/    # Navigation strategies
+│   │ └── domains/       # Domain-specific logic
+│   └── Pages/           # Svelte pages
 ```
 
-## 🎮 Quick Showcase
+### Working with Context-Aware Components
 
-👆 Switch roles, and both the UI and business logic adapt automatically - no IF statements in sight!
-Coming soon!
+[Check out TECHNICAL.md](TECHNICAL.md)
 
-## 🌍 See it in Action
+### Toast Notification System
 
-Coming soon!
-- [qadran.io](https://qadran.io) - Time tracking SaaS // Coming soon!
+[Check out TECHNICAL.md](TECHNICAL.md)
 
-## 💬 Getting Support
+## Development Tools
 
-- Join our [Discord](link) // Coming soon!
-- Follow updates on [Twitter](link) // Coming soon!
-- Check out the [documentation](link) // Coming soon!
-- Read our [blog posts](link) // Coming soon!
+### Code Generation Commands
 
+```bash
+# Generate role-based strategies/contexts
+php artisan split:domain Project admin freelancer employer
 
+# Generate new navigation strategy
+php artisan split:navigation admin freelancer employer
+```
 
-## 🤝 Contributing
+## Resources and Support
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+- Documentation: [Coming Soon]
+- Discord Community: [Coming Soon]
+- Twitter Updates: [Coming Soon]
+- Blog Posts: [Coming Soon]
 
-## 📝 License
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Disclaimer
 
+SPLIT Stack is pre-v1.0.0 and under active development. While suitable as a project foundation, it's not yet production-tested. Feedback and contributions are welcome!
