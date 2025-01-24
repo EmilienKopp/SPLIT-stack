@@ -2,7 +2,7 @@
   import { self } from 'svelte/legacy';
 
   import { Highlighter } from '$lib/utils/highlight';
-  import { resolveNestedValue } from '$lib/utils/objects';
+  import { dot } from '$lib/utils/objects';
   import type { DataHeader } from '$types/common/dataDisplay';
 
   interface Props {
@@ -19,7 +19,7 @@
     onRowClick = undefined
   }: Props = $props();
 
-  let value = $derived(resolveNestedValue(row, header.key));
+  let value = $derived(dot(row, header.key));
 
   function handleClick() {
     if (onRowClick) {

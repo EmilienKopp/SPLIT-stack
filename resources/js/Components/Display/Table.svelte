@@ -3,7 +3,7 @@
 
   import { query } from '$lib/stores';
   import { FilterService } from '$lib/utils/highlight';
-  import { resolveNestedValue } from '$lib/utils/objects';
+  import { dot } from '$lib/utils/objects';
   import { twMerge } from 'tailwind-merge';
   import type { TableAction, TableHeader } from '../../types/components/Table';
   import type { Paginated } from '../../types/pagination';
@@ -95,7 +95,7 @@
             )}
           >
             {#each headers as header}
-              {@const value = resolveNestedValue(row, header.key)}
+              {@const value = dot(row, header.key)}
               <td
                 class="whitespace-nowrap max-w-72 truncate"
                 onclick={self(() => handleRowClick(row))}
