@@ -108,9 +108,9 @@ we use the **strategy pattern**.
 For each "domain" (e.g. `Projects`) we define **contexts** that you can decide to make wide or narrow down
 to a specific type of view (e.g. tables or datalists).
 
-Each context will then provide a **strategy** getter that you're free to have defined as you see fit (ususally a `switch` statement or a `map`).
+Each context will **need** to provide a `getStrategyForRole` method, but the implementation details are up to you (ususally a `switch` statement or a `map`).
 
-A strategy will then define things like the kind of data to display (e.g. headers and action buttons of a table, or the data of a datalist).
+Each strategy will then define things like the kind of data to display (e.g. headers and action buttons of a table, or the data of a datalist).
 
 Code example (full,non-simplified!):
 
@@ -151,6 +151,49 @@ export class ProjectContext implements Context<Project> {
   }
 } 
 ```
+
+```typescript
+// Included with the batteries
+import type { DataAction, DataHeader, IDataStrategy } from '$types/common/dataDisplay';
+import {
+  BaseDataDisplayStrategy
+} from '$lib/core/strategies/dataDisplayStrategy';
+import { InertiaForm } from '$lib/inertia';
+
+// Models made available through type generation
+import { Project } from '..';
+
+// Yours
+import { Trash2 } from 'lucide-svelte';
+
+export class FreelancerProjectTableStrategy
+  extends BaseDataDisplayStrategy<Project> // BaseDataDisplayStrategy is provided by the SPLIT Stack
+  implements IDataStrategy<Project> // IDataStrategy is provided by the SPLIT Stack
+{
+  // defaultHeaders() is an abstract method that you need to implement
+  defaultHeaders(): DataHeader<Project>[] {
+    return [
+      { key: 'name', label: 'Name', searchable: true },
+      { key: 'description', label: 'Description', searchable: true },
+      { key: 'organization.name', label: 'Organization', searchable: true },
+    ];
+  }
+
+  // defaultActions() is an abstract method that you need to implement
+  defaultActions(): DataAction<Project>[] {
+    return [
+      { label: 'Edit', href: (row: Project) => route('project.edit', row.id) },
+      {
+        label: 'Delete',
+        callback: Project.delete,
+        css: () => 'text-red-500',
+        icon: () => Trash2,
+      },
+    ];
+  }
+}
+```
+
 
 
 This allows Pages that include tables or lists to be context-aware and adapt to the user's role easily.
@@ -213,12 +256,18 @@ Example component:
 </AuthenticatedLayout>
 ```
 
+That's it, your component is now context-aware and will adapt to the user's role (whether it is changing on the fly or not).
+
+Of course, no one is **forcing** you to use the strategy patterns if your requirements don't match.
+But we figured that for a good deal of CRUD-centered applications, it is a good way to keep your code clean and organized
+but still have the flexibility to adapt to the user's role.
+
 ### Role Handling made simpler
 
 #### Made possible by:
 
 - A tweak to Inertia's `HandleInertiaRequests` middleware to include roles in the shared data
-- A `RoleContext` store that you can use to switch roles on the fly
+- A `RoleContext` store that you can use to access the user's role or switch roles on the fly
 - A `RoleSwitcher` component if you need frontend role switching (e.g. one user has multiple roles)
 - A `NavigationContext` and strategies for you to define your available navigation options based on roles
 
