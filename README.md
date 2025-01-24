@@ -17,17 +17,27 @@
 
 🔄 Context-aware components that adapt to user roles
 
+🍞 Out-of-the-box toast notifications with flash message handling
+
 📦 Pre-configured development environment with Docker
 
+
+
 <!-- 🛠️ Comprehensive tooling (ESLint, Prettier, Vite, etc.) -->
+
+## Disclaimer
+
+SPLIT Stack is a work in progress and still in a very early stage before a stable `v1.0.0` release.
+Feel free to engage with it, give me feedback, criticize, etc.
+Please keep in mind that it is a work in progress and not yet **TESTED AND READY** for production,
+though it could probably be used as a starting point for a new project.
 
 ## 🎯 Use Cases
 
 SPLIT Stack is ideal for:
-- Startups needing a robust foundation
 - Applications with complex "multi-role users" requirements
-- Teams who don't want to sacrifice architecture for speed
-- CRUD-centered applications
+- Smaller teams who don't want to sacrifice architecture for speed
+- CRUD-heavy applications
 - Freelancers/solopreneurs wanting to jumpstart a spaghetti-free project 🍝
 
 ## 🌟 Features
@@ -47,7 +57,7 @@ SPLIT Stack is ideal for:
 - Pre-configured development environment
 - Hot module replacement
 - Automated code formatting and linting
-- Type-safe forms and API calls
+- Type-safe forms 
 
 ### Performance
 - Server-side rendering capabilities
@@ -271,6 +281,51 @@ but still have the flexibility to adapt to the user's role.
 - A `RoleSwitcher` component if you need frontend role switching (e.g. one user has multiple roles)
 - A `NavigationContext` and strategies for you to define your available navigation options based on roles
 
+### 🍞 Toast it up
+
+#### From the Backend (Laravel Controller)
+
+The simplest way to show a toast is to use Laravel's flash methods in your controller.
+
+The frontend will automatically pick up the flash messages and display them as toast notifications.
+
+
+```php
+// Success message
+return redirect()->back()->with('success', 'Project created successfully!');
+// Error message
+return redirect()->back()->with('error', 'Something went wrong!');
+// Info message
+return redirect()->back()->with('info', 'Did you know you can switch roles?');
+```
+
+#### From the Frontend (Svelte)
+
+You can also trigger toasts directly from your Svelte components using the `toaster` singleton:
+
+```typescript
+// Included with the batteries
+<script lang="ts">
+import { toaster } from '$lib/stores/global/toaster.svelte';
+
+// on inertia form submits
+const form = superUseForm();
+
+function handleSubmit() {
+  $form.post(route('project.store'), {
+    onSuccess: () => {
+      toaster.success('🍞 Good job!');
+    },
+    onError: () => {
+      toaster.error('🍞 Something went wrong!');
+    }
+  });
+}
+</script>
+
+// onclick
+<Button onclick={() => toaster.info('🍞 Toasted!')}>
+```
 
 ## 🛠️ Development / Quality of life Tools
 
