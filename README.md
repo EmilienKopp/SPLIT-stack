@@ -7,13 +7,6 @@
 
 ## Overview
 
-Addresses major pain points in modern web development:
-- The **DevOps Fatigue**
-- The **Type-safety Gap**
-- The **Role-based Headache**
-- The **Microservices Mess**
-- The **Batteries-included Prison**
-
 🏗️ **Full-stack Type Safety**: From database to UI using TypeScript and automated type generation  
 🎭 **Role-Based Architecture**: Built-in context switching with strategy pattern implementation  
 ⚡ **Modern Tech Stack**: Svelte, Laravel, PostgreSQL, Inertia.js  
@@ -27,11 +20,16 @@ Addresses major pain points in modern web development:
 
 ### The Return to Productive Simplicity
 
+Addresses major pain points in modern web development:
+- The **DevOps Fatigue**
+- The **Type-safety Gap**
+- The **Role-based Headache**
+- The **Microservices Mess**
+- The **Batteries-included Prison**
+
 Tired of cloud complexity and microservice overhead? 
-
 Tired of spending more time on infrastructure, cloud configuration, build errors, and other non-productivity issues?
-
-SPLIT Stack embraces a return to productive, maintainable monoliths while keeping modern developer experience:
+SPLIT Stack embraces a return to productive, maintainable monoliths while keeping modern developer experience.
 
 - No complex cloud infrastructure to manage
 - No microservices to orchestrate
