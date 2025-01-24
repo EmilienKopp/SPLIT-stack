@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from '$components/Actions/Button.svelte';
-  import { toaster } from '$components/Feedback/Toast/ToastHandler.svelte';
+  import { toaster } from '$lib/stores/global/ToastHandler.svelte';
   import AuthenticatedLayout from '$layouts/AuthenticatedLayout.svelte';
 
 </script>
