@@ -264,6 +264,25 @@ php artisan split:navigation StrategyName
 │ └── Pages/ # Svelte pages
 ```
 
+## 🎮 Quick Showcase
+
+👆 Switch roles, and both the UI and business logic adapt automatically - no IF statements in sight!
+Coming soon!
+
+## 🌍 See it in Action
+
+Coming soon!
+- [qadran.io](https://qadran.io) - Time tracking SaaS // Coming soon!
+
+## 💬 Getting Support
+
+- Join our [Discord](link) // Coming soon!
+- Follow updates on [Twitter](link) // Coming soon!
+- Check out the [documentation](link) // Coming soon!
+- Read our [blog posts](link) // Coming soon!
+
+
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
