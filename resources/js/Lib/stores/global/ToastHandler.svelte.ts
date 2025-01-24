@@ -1,14 +1,12 @@
-import type { ToastOptions, ToastType } from './types';
+import { DEFAULT_TOAST_OPTIONS, ERROR_TOAST_OPTIONS, INFO_TOAST_OPTIONS, SUCCESS_TOAST_OPTIONS } from '$lib/config/toast';
+import type { ToastOptions, ToastType } from '$types/common/toast';
 
 class ToastHandler {
   #show = $state(false);
   message = $state('');
   type = $state<ToastType>('info');
   options = $state<ToastOptions>({
-    color: 'blue',
-    duration: 3000,
-    position: 'top-right',
-    class: '',
+    ...DEFAULT_TOAST_OPTIONS,
   });
 
   constructor() {}
@@ -63,9 +61,8 @@ class ToastHandler {
    */
   public success(message: string, options?: Partial<ToastOptions>) {
     options = {
-      color: 'green',
-      duration: 3000,
-      position: 'top-right',
+      ...DEFAULT_TOAST_OPTIONS,
+      ...SUCCESS_TOAST_OPTIONS,
       ...options,
     };
     this.show(message, 'success', { color: 'green', ...options });
@@ -82,9 +79,8 @@ class ToastHandler {
    */
   public error(message: string, options?: Partial<ToastOptions>) {
     options = {
-      color: 'red',
-      duration: 3000,
-      position: 'top-right',
+      ...DEFAULT_TOAST_OPTIONS,
+      ...ERROR_TOAST_OPTIONS,
       ...options,
     };
     this.show(message, 'error', { color: 'red', ...options });
@@ -101,9 +97,8 @@ class ToastHandler {
    */
   public info(message: string, options?: Partial<ToastOptions>) {
     options = {
-      color: 'blue',
-      duration: 3000,
-      position: 'top-right',
+      ...DEFAULT_TOAST_OPTIONS,
+      ...INFO_TOAST_OPTIONS,
       ...options,
     };
     this.show(message, 'info', { color: 'blue', ...options });
