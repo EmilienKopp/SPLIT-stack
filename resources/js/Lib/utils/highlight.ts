@@ -1,11 +1,21 @@
+/** Represents a position and styling for text highlighting */
 interface HighlightPosition {
   start: number;
   end: number;
   class: string;
 }
 
+/**
+ * Utility class for text highlighting and matching operations
+ */
 export class Highlighter {
 
+  /**
+   * Performs fuzzy matching on a target object or array against a search query
+   * @param target - Object or string array to search within
+   * @param searchQuery - String to search for
+   * @returns boolean indicating if the search query matches the target
+   */
   public static Fuzzy(target: object | Array<string>, searchQuery: string) {
     let targetString = "";
     if (!Array.isArray(target)) {
@@ -17,18 +27,37 @@ export class Highlighter {
     return Highlighter.fuzzyMatch(targetString, searchQuery)
   }
 
+  /**
+   * Performs exact matching on candidate fields against a search query
+   * @param candidate - Object containing first_name, last_name, and email fields
+   * @param searchQuery - String to search for
+   * @returns boolean indicating if any field contains the search query
+   */
   public static Exact(candidate: any, searchQuery: string) {
     return candidate.first_name.includes(searchQuery)
       || candidate.last_name.includes(searchQuery)
       || candidate.email.includes(searchQuery)
   }
 
+  /**
+   * Performs case-insensitive matching on candidate fields against a search query
+   * @param candidate - Object containing first_name, last_name, and email fields
+   * @param searchQuery - String to search for
+   * @returns boolean indicating if any field contains the search query (case-insensitive)
+   */
   public static IgnoreCase(candidate: any, searchQuery: string) {
     return candidate.first_name.toLowerCase().includes(searchQuery.toLowerCase())
       || candidate.last_name.toLowerCase().includes(searchQuery.toLowerCase())
       || candidate.email.toLowerCase().includes(searchQuery.toLowerCase())
   }
 
+  /**
+   * Highlights characters in a target string that match characters in the search string
+   * @param targetString - String to highlight within
+   * @param searchString - String containing characters to highlight
+   * @param highlightClass - Optional CSS class to apply to highlighted spans
+   * @returns HTML string with highlighted characters wrapped in spans
+   */
   public static fuzzyHighlight(targetString: string, searchString: string, highlightClass?: string) {
     const target = this.htmlSafe(targetString)?.split('');
     const search = searchString?.split('');
@@ -45,10 +74,22 @@ export class Highlighter {
     return result?.join('');
   }
 
+  /**
+   * Escapes HTML special characters in a string
+   * @param str - String to escape
+   * @returns HTML-safe string
+   */
   public static htmlSafe(str: string) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
 
+  /**
+   * Highlights exact matches of a search string within a target string
+   * @param targetString - String to highlight within
+   * @param searchString - String to search for and highlight
+   * @param highlightClass - Optional CSS class to apply to highlighted spans
+   * @returns HTML string with highlighted matches wrapped in spans
+   */
   public static exactHighlight(targetString: string, searchString: string, highlightClass?: string) {
     const safe = Highlighter.htmlSafe(targetString);
 
@@ -64,6 +105,13 @@ export class Highlighter {
     return result.join('');
   }
 
+  /**
+   * Highlights multiple exact matches from an array of search strings
+   * @param targetString - String to highlight within
+   * @param searchStrings - Array of strings to search for and highlight
+   * @param highlightClass - Optional CSS class to apply to highlighted spans
+   * @returns HTML string with highlighted matches wrapped in spans
+   */
   public static exactHighlightFromArray(targetString: string, searchStrings: string[], highlightClass?: string) {
     let result = Highlighter.htmlSafe(targetString);
     let resultArray = targetString.split('');
@@ -81,6 +129,14 @@ export class Highlighter {
     return result;
   }
 
+  /**
+   * Generic highlight method supporting both fuzzy and exact matching
+   * @param targetString - String to highlight within
+   * @param searchString - String to search for and highlight
+   * @param highlightClass - Optional CSS class to apply to highlighted spans
+   * @param type - Type of highlighting to perform ("fuzzy" or "exact")
+   * @returns HTML string with highlighted matches wrapped in spans
+   */
   public static highlight(
     targetString: string,
     searchString: string,
@@ -94,6 +150,14 @@ export class Highlighter {
     }
   }
 
+  /**
+   * Highlights multiple strings with support for different highlight classes and matching types
+   * @param targetString - String to highlight within
+   * @param searchStrings - Array of strings to search for and highlight
+   * @param highlightClasses - Array of CSS classes to apply to highlighted spans
+   * @param type - Type of highlighting to perform ("fuzzy" or "exact")
+   * @returns HTML string with highlighted matches wrapped in spans
+   */
   public static highlightMany(
     targetString: string,
     searchStrings: string[] = [],
@@ -177,6 +241,12 @@ export class Highlighter {
     return result.join('');
   }
 
+  /**
+   * Performs fuzzy matching between a target string and search string
+   * @param targetString - String to search within
+   * @param searchString - String to search for
+   * @returns boolean indicating if all characters in search string exist in target string
+   */
   public static fuzzyMatch(targetString: string, searchString: string) {
     if (!targetString || !searchString) return false;
     const target = targetString?.toLowerCase()?.split('');

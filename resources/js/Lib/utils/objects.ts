@@ -13,15 +13,15 @@
  *  }
  * }
  * 
- * resolveNestedValue(obj, 'a.b.c') // 'value' 
+ * dot(obj, 'a.b.c') // 'value' 
  */
-export function resolveNestedValue(obj: any, key: string) {
+export function dot(obj: any, key: string) {
   if (key.includes('.')) {
     const [first, ...rest] = key.split('.');
     if(!obj?.[first]) {
       return obj?.[key];
     }
-    return resolveNestedValue(obj[first], rest.join('.'));
+    return dot(obj[first], rest.join('.'));
   }
   return obj?.[key];
 }

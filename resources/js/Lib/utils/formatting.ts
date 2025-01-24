@@ -1,6 +1,5 @@
-import dayjs from 'dayjs';
 import { capitalize } from './strings';
-import { Admin, Candidate, Employer } from '$models';
+import dayjs from 'dayjs';
 
 export const DATE_FORMAT = 'YYYY/MM/DD';
 export const TIME_FORMAT = 'HH:mm';
@@ -95,10 +94,4 @@ export function formatStringRangeToNumbers(
   const max = Math.max(first, last);
   const min = Math.min(first, last);
   return [min, max];
-}
-
-type HasNames = Employer | Candidate | Admin;
-export function initialAndLastName(model: HasNames): string {
-  const initial = model.first_name[0].toUpperCase();
-  return `${initial}. ${model.last_name}`;
 }

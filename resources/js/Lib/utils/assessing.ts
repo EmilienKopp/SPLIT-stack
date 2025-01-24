@@ -1,7 +1,7 @@
 
 
 export function truthy(value: any): boolean {
-  return value !== undefined && value !== null;
+  return value !== undefined && value !== null && value !== false;
 }
 
 export function falsy(value: any): boolean {
