@@ -7,12 +7,19 @@
 
 ## Overview
 
+Addresses major pain points in modern web development:
+- The **DevOps Fatigue**
+- The **Type-safety Gap**
+- The **Role-based Headache**
+- The **Microservices Mess**
+- The **Batteries-included Prison**
+
 🏗️ **Full-stack Type Safety**: From database to UI using TypeScript and automated type generation  
 🎭 **Role-Based Architecture**: Built-in context switching with strategy pattern implementation  
 ⚡ **Modern Tech Stack**: Svelte, Laravel, PostgreSQL, Inertia.js  
 🏃‍♂️ **Developer Experience**: Rapid development with extensive code scaffolding  
 🎨 **Clean Architecture**: Clear separation of concerns and domain-driven design  
-🔋 **Battery Included**: Comes with many common but customizable components (tables, filter search, ...) and utilities (toasts, array helpers, ...)  
+🔋 **Battery Included**: Comes with many common but customizable components (tables, filter search, ...) and utilities (toasts, array helpers, ...) but you can tweak, twist, and twirl them to your liking   
 💎 **Modern Monolith**: Hostable one one machine or containerized. No more complex web of microservices or BaaS latency.  
 🔍 **Searchable**: Comes with a built-in search component (dynamic frontend filtering) and a base installation of Laravel Scout.  
 
