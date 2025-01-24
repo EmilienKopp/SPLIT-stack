@@ -112,7 +112,7 @@ Each context will then provide a **strategy** getter that you're free to have de
 
 A strategy will then define things like the kind of data to display (e.g. headers and action buttons of a table, or the data of a datalist).
 
-Code example (simplified):
+Code example (full,non-simplified!):
 
 ```typescript
 // Provided in the SPLIT Stack
@@ -158,7 +158,6 @@ You can switch on the spot (we provide a `<RoleSwitcher/>` component for that!),
 or just use it as DRYer way to define your components.
 
 Example component:
-
 ```typescript
 <script lang="ts">
   // Components/layouts provided out of the box
