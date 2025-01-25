@@ -92,6 +92,17 @@ npm run start
 - Type-safe forms with runtime validation
 - Type-safe data passing between Laravel and Inertia
 - Route-safety for both Laravel and frontend
+- How it bridges the **Type-safety Gap**:
+```
+              Database Schema → Laravel Models → TypeScript Interfaces → Frontend Components
+                  ↓                   ↓                 ↓                        ↓
+                 SQL            Type Hinting       Static Analysis         Runtime Checks
+
+Safety:
+Laravel:     [============================]
+TypeScript:                                                [================================]
+Splitstack:                               [‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾]
+```
 
 #### Role Flexibility
 - Context switching based on user roles
