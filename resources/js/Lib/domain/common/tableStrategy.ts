@@ -1,4 +1,4 @@
-import type { TableAction, TableHeader } from '$types/common/table';
+import type { DataAction, DataHeader } from '$types/common/dataDisplay';
 
 /**
  * A type that extends a given type T with an optional index property.
@@ -8,12 +8,12 @@ export type Indexed<T> = T & { index?: number };
 /**
  * A type that extends TableHeader with an optional index property.
  */
-export type ExtendTableHeader<T> = Indexed<TableHeader<T>>;
+export type ExtendTableHeader<T> = Indexed<DataHeader<T>>;
 
 /**
  * A type that extends TableAction with an optional index property.
  */
-export type ExtendTableAction<T> = Indexed<TableAction<T>>;
+export type ExtendTableAction<T> = Indexed<DataAction<T>>;
 
 /**
  * Abstract base class for table strategies.
@@ -22,15 +22,15 @@ export abstract class BaseTableStrategy<T> {
   /**
    * Returns the default headers for the table.
    */
-  protected abstract defaultHeaders(): TableHeader<T>[];
+  protected abstract defaultHeaders(): DataHeader<T>[];
 
   /**
    * Returns the default actions for the table.
    */
-  protected abstract defaultActions(): TableAction<T>[];
+  protected abstract defaultActions(): DataAction<T>[];
 
-  #headers: TableHeader<T>[] = [];
-  #actions: TableAction<T>[] = [];
+  #headers: DataHeader<T>[] = [];
+  #actions: DataAction<T>[] = [];
 
   constructor() {
     this.#headers = this.defaultHeaders();
@@ -41,7 +41,7 @@ export abstract class BaseTableStrategy<T> {
    * Gets the headers for the table, optionally extending them with additional headers.
    * @param extendedHeaders - Additional headers to extend the default headers.
    */
-  headers(extendedHeaders: ExtendTableHeader<T>[] = []): TableHeader<T>[] {
+  headers(extendedHeaders: ExtendTableHeader<T>[] = []): DataHeader<T>[] {
     return this.extendHeaders(extendedHeaders);
   }
 
@@ -49,7 +49,7 @@ export abstract class BaseTableStrategy<T> {
    * Gets the actions for the table, optionally extending them with additional actions.
    * @param extendedActions - Additional actions to extend the default actions.
    */
-  actions(extendedActions: ExtendTableAction<T>[] = []): TableAction<T>[] {
+  actions(extendedActions: ExtendTableAction<T>[] = []): DataAction<T>[] {
     return this.extendActions(extendedActions);
   }
 
@@ -98,7 +98,7 @@ export abstract class BaseTableStrategy<T> {
    * @param filters - An array of objects containing the key and filter handler for each header.
    */
   setFilters(
-    filters: { key: string; filterHandler: TableHeader<T>['filterHandler'] }[]
+    filters: { key: string; filterHandler: DataHeader<T>['filterHandler'] }[]
   ) {
     for (const filter of filters) {
       const headerIndex = this.#headers.findIndex((h) => h.key === filter.key);
