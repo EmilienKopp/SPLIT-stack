@@ -10,13 +10,12 @@ class ProjectRepository {
 
   use CacheableRepo;
 
-  #[WithCache('projects.all', 60)]
+  #[WithCache('projects.all', 30)]
   public static function index() {
-    sleep(2);
+    sleep(4);
     return Project::all();
   }
 
-  #[WithCache('projects.{id}', 60)]
   public static function find($id) {
     return Project::find($id);
   }
