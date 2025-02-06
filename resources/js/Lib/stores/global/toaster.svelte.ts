@@ -1,14 +1,12 @@
-import type { ToastOptions, ToastType } from './types';
+import { DEFAULT_TOAST_OPTIONS, ERROR_TOAST_OPTIONS, INFO_TOAST_OPTIONS, SUCCESS_TOAST_OPTIONS } from '$lib/config/toast';
+import type { ToastOptions, ToastType } from '$types/common/toast';
 
-class ToastHandler {
+class Toaster {
   #show = $state(false);
   message = $state('');
   type = $state<ToastType>('info');
   options = $state<ToastOptions>({
-    color: 'blue',
-    duration: 3000,
-    position: 'top-right',
-    class: '',
+    ...DEFAULT_TOAST_OPTIONS,
   });
 
   constructor() {}
@@ -63,9 +61,8 @@ class ToastHandler {
    */
   public success(message: string, options?: Partial<ToastOptions>) {
     options = {
-      color: 'green',
-      duration: 3000,
-      position: 'top-right',
+      ...DEFAULT_TOAST_OPTIONS,
+      ...SUCCESS_TOAST_OPTIONS,
       ...options,
     };
     this.show(message, 'success', { color: 'green', ...options });
@@ -82,9 +79,8 @@ class ToastHandler {
    */
   public error(message: string, options?: Partial<ToastOptions>) {
     options = {
-      color: 'red',
-      duration: 3000,
-      position: 'top-right',
+      ...DEFAULT_TOAST_OPTIONS,
+      ...ERROR_TOAST_OPTIONS,
       ...options,
     };
     this.show(message, 'error', { color: 'red', ...options });
@@ -101,9 +97,8 @@ class ToastHandler {
    */
   public info(message: string, options?: Partial<ToastOptions>) {
     options = {
-      color: 'blue',
-      duration: 3000,
-      position: 'top-right',
+      ...DEFAULT_TOAST_OPTIONS,
+      ...INFO_TOAST_OPTIONS,
       ...options,
     };
     this.show(message, 'info', { color: 'blue', ...options });
@@ -118,16 +113,16 @@ class ToastHandler {
   }
 }
 
-function createToastHandler() {
-  return new ToastHandler();
+function createToaster() {
+  return new Toaster();
 }
-
+  
 /**
  * The toast handler singleton.
  * This can be used to display toast notifications throughout the application.
  *
  * @constant
- * @type {ToastHandler}
+ * @type {Toaster}
  * @member {boolean} showing - Whether the toast is currently showing.
  * @member {string} message - The message to display in the toast.
  * @member {ToastType} type - The type of toast to display.
@@ -136,4 +131,6 @@ function createToastHandler() {
  * @method {error} - Display an error toast.
  * @method {info} - Display an info toast.
  */
-export const toaster = createToastHandler();
+export const toaster = createToaster();
+
+export type * from '$types/common/toast';

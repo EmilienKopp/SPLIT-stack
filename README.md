@@ -2,125 +2,189 @@
 
 <p align="center">
   <strong>Svelte • PostgreSQL • Laravel • Inertia • TypeScript</strong><br>
-  A modern, type-safe, multi-context web application stack for rapid development
+  A modern, type-safe, multi-context web application stack for rapid development.
 </p>
 
-## 🌟 Features
+## Overview
 
-### Type Safety Everywhere
-- Full-stack type safety from database to UI
-- Automatic TypeScript interface generation from Laravel models
-- Inertia.js props typing for seamless backend-frontend communication
+🏗️ **Full-stack Type Safety**: From database to UI using TypeScript and automated type generation  
+🎭 **Role-Based Architecture**: Built-in context switching with strategy pattern implementation  
+⚡ **Modern Tech Stack**: Svelte, Laravel, PostgreSQL, Inertia.js  
+🏃‍♂️ **Developer Experience**: Rapid development with extensive code scaffolding  
+🎨 **Clean Architecture**: Clear separation of concerns and domain-driven design  
+🔋 **Battery Included**: Comes with many common but customizable components (tables, filter search, ...) and utilities (toasts, array helpers, ...) but you can tweak, twist, and twirl them to your liking   
+💎 **Modern Monolith**: Hostable one one machine or containerized. No more complex web of microservices or BaaS latency.  
+🔍 **Searchable**: Comes with a built-in search component (dynamic frontend filtering) and a base installation of Laravel Scout.  
 
-### Role-Based Architecture
-- Built-in context switching based on user roles
-- Strategy pattern implementation for role-specific views and behaviors
-- Clean separation of concerns following DDD principles
+## Why SPLIT Stack?
 
-### Developer Experience
-- Comprehensive CLI tools for code generation
-- Pre-configured development environment
-- Hot module replacement
-- Automated code formatting and linting
-- Type-safe forms and API calls
+### The Return to Productive Simplicity
 
-### Performance
-- Server-side rendering capabilities
-- Efficient state management
-- Optimized asset bundling with Vite
+Addresses major pain points in modern web development:
+- The **DevOps Fatigue**
+- The **Type-safety Gap**
+- The **Role-based Headache**
+- The **Microservices Mess**
+- The **Batteries-included Prison**
 
-## 🚀 Quick Start
+Tired of cloud complexity and microservice overhead? 
+Tired of spending more time on infrastructure, cloud configuration, build errors, and other non-productivity issues?
+SPLIT Stack embraces a return to productive, maintainable monoliths while keeping modern developer experience.
+
+- No complex cloud infrastructure to manage
+- No microservices to orchestrate
+- No BaaS vendor lock-in
+- Just a clean, powerful stack you fully control
+- Fully open-source and free
+
+## Is SPLIT Stack Right for You?
+
+SPLIT Stack is ideal for:
+- Applications with complex "multi-role users" requirements
+- Small, composite teams who want to work fast with a clean basis to build on
+- CRUD-heavy applications
+- Freelancers/solopreneurs wanting to jumpstart a spaghetti-free project 🍝
+(or anyone who likes to get moving fast but wants to keep it clean)
+
+## Getting Started
+
+### Quick Start
 
 1. Clone the repository
-```
+```bash
 git clone https://github.com/yourusername/split-stack
 ```
+
 2. Install dependencies
-```
+```bash
 composer install
 npm install
 ```
+
 3. Set up environment
-```
+```bash
 cp .env.example .env
 php artisan key:generate
 ```
-4. Start development servers
 
-```
+4. Start development servers
+```bash
 npm run start
 ```
 
-This should spin up docker containers, laravel server, and vite dev server.
+⚠️ Docker and docker-compose are required for the DB and pgAdmin.
 
-⚠️ You need to have docker and docker compose installed.
+### Stack Components
 
-
-## 📦 Stack Components
-
-- **Frontend**: Svelte + TypeScript
-- **Backend**: Laravel 11
-- **Database**: PostgreSQL
-- **API Layer**: Inertia.js
+- **Flexible, Fast Frontend**: Svelte + TypeScript
+- **Battle-tested Backend**: Laravel 11
+- **Reliable Database**: PostgreSQL
+- **The glue**: Inertia.js
 - **Build Tool**: Vite
 - **Styling**: TailwindCSS + DaisyUI
 
-## 🛠️ Development Tools
+## Technical Documentation
 
-### Code Generation Commands
+### Core Features
 
-#### Generate new component
+#### Type Safety System
+- Consistent types from Database to Backend to Frontend
+- Type-safe forms with runtime validation
+- Type-safe data passing between Laravel and Inertia
+- Route-safety for both Laravel and frontend
+- How it bridges the **Type-safety Gap**:
 ```
-// On our roadmap
-```
+              Database Schema → Laravel Models → TypeScript Interfaces → Frontend Components
+                  ↓                   ↓                 ↓                        ↓
+                 SQL            Type Hinting       Static Analysis         Runtime Checks
 
-#### Generate role-based strategies/contexts
-
-```
-php artisan split:tables ModelName role1 role2 role3
-```
-
-#### Generate new navigation strategy
-
-Because we all know that handling routes and navigation with role conditionals is a pain in the donkey.
-
-```
-php artisan split:navigation StrategyName
+Safety:
+Laravel:     [============================]
+TypeScript:                                                [================================]
+Splitstack:                               [‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾]
 ```
 
-### Directory Structure
+#### Role Flexibility
+- Context switching based on user roles
+- Strategy pattern for role-specific behaviors
+- Zero conditional statements for role handling
+- Live role switching capability
+
+#### Developer Experience
+- CLI tools for code generation
+- Pre-made components
+- Many convenient utilities (toasts, array helpers, Laravel Traits for common pain points)
+- Hot module replacement
+- Pre-configured DB containers
+- Automated code formatting and linting
+
+### Understanding Inertia.js Integration
+
+Inertia.js connects your frontend and backend by:
+- Enabling Laravel to directly drive your Svelte frontend
+- Eliminating need for an actual API
+- Providing SPA behavior with monolith simplicity
+- Handling authentication and authorization seamlessly
+
+Flow:
+1. User clicks a link
+2. Inertia makes XHR request
+3. Laravel controller returns data
+4. Svelte component displays data
+5. URL updates without page reload
+
+### Code Organization
 
 ```
 ├── app/
-│ ├── Console/Commands/ # CLI tools
-│ ├── Http/Controllers/ # Laravel controllers
-│ └── Models/ # Laravel models
+│ ├── Console/Commands/    # CLI tools
+│ ├── Http/Controllers/    # Laravel controllers
+│ └── Models/             # Laravel models
 ├── resources/
 │ └── js/
-│ ├── Components/ # Svelte components
-│ ├── Layouts/ # Page layouts
-│ ├── Lib/ # Core utilities
-| | ├── navigation/ # Navigation strategies
-│ │ └── domains/ # Domain-specific logic
-│ └── Pages/ # Svelte pages
+│   ├── Components/       # Svelte components
+│   ├── Layouts/         # Page layouts
+│   ├── Lib/             # Core utilities
+│   │ ├── navigation/    # Navigation strategies
+│   │ └── domains/       # Domain-specific logic
+│   └── Pages/           # Svelte pages
 ```
 
-## 🎯 Use Cases
+### Working with Context-Aware Components
 
-SPLIT Stack is ideal for:
-- Startups needing a robust foundation
-- Applications with complex role-based requirements
-- Teams wanting type safety without sacrificing development speed
-- Projects requiring clean architecture and maintainability
-- Freelancers wanting to build a new project quickly with professional quality
-- CRUD-centered applications
+[Check out TECHNICAL.md](TECHNICAL.md)
 
-## 🤝 Contributing
+### Toast Notification System
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+[Check out TECHNICAL.md](TECHNICAL.md)
 
-## 📝 License
+## Development Tools
+
+### Code Generation Commands
+
+```bash
+# Generate role-based strategies/contexts
+php artisan split:domain Project admin freelancer employer
+
+# Generate new navigation strategy
+php artisan split:navigation admin freelancer employer
+```
+
+## Resources and Support
+
+- Documentation: [Coming Soon]
+- Discord Community: [Coming Soon]
+- Twitter Updates: [Coming Soon]
+- Blog Posts: [Coming Soon]
+
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Disclaimer
 
+SPLIT Stack is pre-v1.0.0 and under active development. While suitable as a project foundation, it's not yet production-tested. Feedback and contributions are welcome!

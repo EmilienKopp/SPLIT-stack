@@ -32,7 +32,13 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
+
+                /**
+                 * add `load('roles')` to the user object if you have a relationship
+                 * nothing to do if the role is just a column in the users table
+                 */
                 'user' => $request->user()?->load('roles'),
+
             ],
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),
@@ -41,7 +47,7 @@ class HandleInertiaRequests extends Middleware
             ],
             
             'enums' => [
-                'roles' => \App\Enums\RoleEnum::toSelectOptions(),
+                'roles' => [],
             ],
         ];
     }

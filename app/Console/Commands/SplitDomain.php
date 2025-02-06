@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-class SplitTables extends Command
+class SplitDomain extends Command
 {
-  protected $signature = 'split:tables 
+  protected $signature = 'split:domain
                           {model : The name of the model}
                           {roles* : The roles to generate strategies for}';
 

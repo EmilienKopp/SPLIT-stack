@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { resolveNestedValue } from '$lib/utils/objects';
+  import { dot } from '$lib/utils/objects';
   import type { DataHeader } from '$types/common/dataDisplay';
 
   interface Props {
@@ -25,7 +25,7 @@
 
 <dl>
   {#each headers as { key, label, formatter }}
-    {@const resolved = resolveNestedValue(data, key)}
+    {@const resolved = dot(data, key)}
     <dt>{label}:</dt>
     {#if resolved === true}
       <dd>Yes</dd>

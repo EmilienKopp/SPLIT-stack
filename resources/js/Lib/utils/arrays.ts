@@ -1,4 +1,4 @@
-import { resolveNestedValue } from './objects';
+import { dot } from './objects';
 
 /**
  * Groups an array of objects by a specified key.
@@ -14,7 +14,7 @@ export function groupBy<T>(
 ): Record<string, T[]> {
   return arr.reduce(
     (acc, item) => {
-      const resolved = resolveNestedValue(item, key);
+      const resolved = dot(item, key);
       const group = resolved ? resolved.toString() : 'undefined';
       if (!acc[group]) {
         acc[group] = [];

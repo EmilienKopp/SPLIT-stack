@@ -7,6 +7,10 @@ export interface ToastOptions {
     duration?: number;
     position?: ToastPosition;
     class?: string;
+    animations?: {
+        enter?: string;
+        exit?: string;
+    };
 }
 
 export interface ToastState {
