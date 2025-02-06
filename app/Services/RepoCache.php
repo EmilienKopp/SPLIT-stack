@@ -22,7 +22,7 @@ class WithCache
   }
 }
 
-class Cacher
+class RepoCache
 {
   public static function cache($class, $method, $args, $tags = [])
   {
