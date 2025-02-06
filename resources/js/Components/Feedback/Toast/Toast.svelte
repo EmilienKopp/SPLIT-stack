@@ -2,7 +2,7 @@
     import { Link } from '@inertiajs/svelte';
     import { onDestroy, onMount } from 'svelte';
     import { fly } from 'svelte/transition';
-    import { toaster } from '../../../Lib/stores/global/toaster.svelte
+    import { toaster } from '$lib/stores/global/toaster.svelte';
 
     interface Props {
         href?: string | undefined;
