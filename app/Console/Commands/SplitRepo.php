@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class SplitRepo extends Command
 {
