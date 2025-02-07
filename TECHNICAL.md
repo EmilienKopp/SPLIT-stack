@@ -5,6 +5,7 @@
 ### Domain-Driven Organization
 
 SPLIT Stack encourages organizing code by domain (entity/model) rather than technical layers. This approach:
+
 - Makes related code easier to find and maintain
 - Reduces cognitive load when working on features
 - Facilitates better separation of concerns
@@ -17,6 +18,7 @@ Database Schema → Laravel Models → TypeScript Interfaces → Frontend Compon
 ```
 
 The type generation system ensures:
+
 1. Database columns are reflected in Laravel model properties
 2. Laravel models are automatically converted to TypeScript interfaces
 3. Form validation matches TypeScript types
@@ -45,9 +47,8 @@ import { Context } from '$lib/core/contexts/context';
 import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
 import { Project } from '$models';
 
-export class ProjectContext 
-implements Context<Project> // Context class is a generic Interface defined by the SPLIT Stack
-{
+export class ProjectContext implements Context<Project> {
+  // Context class is a generic Interface defined by the SPLIT Stack
   strategy: BaseDataDisplayStrategy<Project>;
 
   constructor(role: string) {
@@ -73,14 +74,20 @@ implements Context<Project> // Context class is a generic Interface defined by t
 2. **Strategy Implementation**
 
 ```typescript
-import type { DataAction, DataHeader, IDataStrategy } from '$types/common/dataDisplay';
+import type {
+  DataAction,
+  DataHeader,
+  IDataStrategy,
+} from '$types/common/dataDisplay';
 import { BaseDataDisplayStrategy } from '$lib/core/strategies/dataDisplayStrategy';
 import { Project } from '$models';
 
 export class FreelancerProjectTableStrategy
-  extends BaseDataDisplayStrategy<Project> // BaseDataDisplayStrategy is a generic class defined by the SPLIT Stack
-  implements IDataStrategy<Project> // IDataStrategy is a generic Interface defined by the SPLIT Stack
+  extends BaseDataDisplayStrategy<Project>
+  // BaseDataDisplayStrategy is a generic class defined by the SPLIT Stack
+  implements IDataStrategy<Project>
 {
+  // IDataStrategy is a generic Interface defined by the SPLIT Stack
   /**
    * @abstract You must implement this method
    **/
@@ -97,9 +104,9 @@ export class FreelancerProjectTableStrategy
    **/
   defaultActions(): DataAction<Project>[] {
     return [
-      { 
-        label: 'Edit', 
-        href: (row: Project) => route('project.edit', row.id) 
+      {
+        label: 'Edit',
+        href: (row: Project) => route('project.edit', row.id),
       },
       {
         label: 'Delete',
@@ -140,15 +147,14 @@ export class FreelancerProjectTableStrategy
 Navigation is handled through strategies similar to context-aware components:
 
 ```typescript
-export class AdminNavigationStrategy 
-implements NavigationStrategy // NavigationStrategy is a generic Interface defined by the SPLIT Stack
-{
+export class AdminNavigationStrategy implements NavigationStrategy {
+  // NavigationStrategy is a generic Interface defined by the SPLIT Stack
   getNavigationItems(): NavigationItem[] {
     return [
       {
         label: 'Dashboard',
         href: route('dashboard'),
-        icon: Home
+        icon: Home,
       },
       {
         label: 'Projects',
@@ -157,14 +163,14 @@ implements NavigationStrategy // NavigationStrategy is a generic Interface defin
         children: [
           {
             label: 'All Projects',
-            href: route('projects.index')
+            href: route('projects.index'),
           },
           {
             label: 'Archived',
-            href: route('projects.archived')
-          }
-        ]
-      }
+            href: route('projects.archived'),
+          },
+        ],
+      },
     ];
   }
 }
@@ -201,7 +207,7 @@ function handleSubmit() {
     },
     onError: () => {
       toaster.error('Failed to create project');
-    }
+    },
   });
 }
 ```
@@ -261,10 +267,155 @@ function handleSubmit() {
     onError: (errors) => {
       // errors is typed based on ProjectForm
       console.log(errors.name); // string | undefined
-    }
+    },
   });
 }
 ```
+
+## Repository Caching
+
+SPLIT stack includes an attribute-based caching system for repositories. This allows you to easily cache repository method results with minimal boilerplate.
+
+### Usage
+
+Generate a new cached repository:
+
+```bash
+php artisan split:repo User --ttl=300  # TTL in seconds (default: 60)
+```
+
+This generates a repository with built-in caching:
+
+```php
+class UserRepository {
+    use CacheableRepo;
+
+    #[WithCache('users.all', 300)]
+    public static function index() {
+        return User::all();
+    }
+
+    #[WithCache('users.{id}', 300)]
+    public static function find($id) {
+        return User::find($id);
+    }
+}
+```
+
+Access your repository methods with caching:
+
+```php
+// Get cached data (creates cache if doesn't exist)
+$users = UserRepository::cached('index');
+
+// Get fresh data without touching cache
+$freshUsers = UserRepository::fresh('find', id: 1);
+
+// Invalidate cache and get fresh data
+$updatedUsers = UserRepository::refresh('index');
+```
+
+### Cache Configuration
+
+The `WithCache` attribute accepts these parameters:
+
+- `key`: Cache key (supports parameter interpolation with `{paramName}`)
+- `ttl`: Time-to-live in seconds
+- `useQuery`: Include query parameters in cache key
+- `tags`: Array of cache tags for grouped invalidation
+
+Example with all options:
+
+```php
+#[WithCache(
+    key: 'users.active.{status}',
+    ttl: 300,
+    useQuery: true,
+    tags: ['users', 'active']
+)]
+public static function getActive($status) {
+    return User::where('status', $status)->get();
+}
+```
+
+### Cache Keys
+
+Cache keys support parameter interpolation:
+
+- Sequential parameters: `users.{0}`, e.g. `find($value)`
+- Named parameters: `users.search.{name}.{age}` e.g. `search(age: 30, name: 'John')`
+- Query parameters: Appended automatically when `useQuery: true`
+
+### Sequential Parameters
+
+When your method uses regular parameters, the values are matched by position:
+
+```php
+#[WithCache('products.category.{catId}.page.{pageNumber}')] //the name between {} is up to you unless you use named parameters
+public static function getByCategory($categoryId, $page) {
+    return Product::where('category_id', $categoryId)
+        ->paginate($page);
+}
+
+// Usage:
+ProductRepository::cached('getByCategory', 5, 1);
+// Creates cache key: "products.category.5.page.1"
+```
+
+### Named Parameters
+
+When passing an associative array or named parameters, parameters are matched by name,
+
+and **order does not matter** anymore.
+
+```php
+#[WithCache('orders.status.{status}.user.{userId}')]
+public static function getUserOrders($params) {
+    return Order::where('user_id', $params['userId'])
+        ->where('status', $params['status'])
+        ->get();
+}
+
+#[WithCache('orders.search.{status}.user.{userId}')] 
+public static function search($userId, $status) {
+    return Order::where('user_id', $userId)
+        ->where('status', $status)
+        ->get();
+}
+
+// Usage:
+ProductRepository::cached('getUserOrders', [
+    'userId' => 123,
+    'status' => 'pending'
+]);
+// Creates cache key: "orders.status.pending.user.123"
+
+ProductRepository::cached('search', status: 'pending', userId: 123);
+// Same cache key: "orders.search.pending.user.123"
+```
+
+The key difference is how you pass the parameters when calling `cached()`. 
+
+### Query appending
+
+When `useQuery` is set to `true`, query parameters are automatically appended to the cache key:
+
+```php
+#[WithCache('products.category.{catId}', ttl: 300, useQuery: true)]
+public static function search() {
+    $searchParams = request()->query();
+    $query = Product::where('category_id', $query['catId'])
+        ->where('name', 'like', "%{$query['name']}%");
+    if($query['price']) {
+        $query->where('price', '>', $query['price']);
+    }
+    return $query->get();
+}
+// Cache key: "products.category.5?name=apple&price=100"
+```
+
+Use whichever style makes more sense for your use case - sequential for simple parameters, named for clearer intent with multiple parameters.
+
 
 ## CLI Tools
 
@@ -277,6 +428,7 @@ php artisan split:domain Project admin freelancer employer
 ```
 
 This creates:
+
 - ProjectContext class
 - Role-specific strategies
 - Default strategy
@@ -291,10 +443,10 @@ php artisan split:navigation admin freelancer employer
 ```
 
 Generates:
+
 - Navigation strategies for each role
 - Navigation store
 - Navigation components
-
 
 ## Various JS/TS utilities
 
@@ -321,6 +473,7 @@ The `arrays.ts` utility provides helpful functions for array manipulation:
 Centralize your date formatting in one place with the default constants.
 
 Formats:
+
 ```typescript
 // Feel free to change these to your liking
 export const DATE_FORMAT = 'YYYY/MM/DD';
@@ -328,9 +481,9 @@ export const TIME_FORMAT = 'HH:mm';
 export const DATETIME_FORMAT = `${DATE_FORMAT} ${TIME_FORMAT}`;
 
 // Usage
-time(new Date(), 'h:mm a') // '12:00 PM'
-date(new Date(), 'MM/dd/yyyy') // '01/24/2025'
-datetime(new Date(), 'MM/dd/yyyy h:mm a') // '01/24/2025 12:00 PM'
+time(new Date(), 'h:mm a'); // '12:00 PM'
+date(new Date(), 'MM/dd/yyyy'); // '01/24/2025'
+datetime(new Date(), 'MM/dd/yyyy h:mm a'); // '01/24/2025 12:00 PM'
 ```
 
 ### String Utilities
@@ -343,7 +496,6 @@ The `strings.ts` utility provides helpful functions for string manipulation:
 - `snakeCase(str: string)`: Converts a string to snake case
 - `slugify(str: string)`: Converts a string to a slug
 
-
 ### Markup highlighting
 
 The `highlight.ts` utility provides a utility `class` that can be used to highlight text in a string.
@@ -353,11 +505,13 @@ Great when working with search results!
 ### Core Methods (static)
 
 #### Matching Methods
+
 - `Fuzzy(target, searchQuery)`: Performs fuzzy matching on objects or string arrays
 - `Exact(candidate, searchQuery)`: Performs exact matching on specific object fields
 - `IgnoreCase(candidate, searchQuery)`: Case-insensitive matching on object fields
 
 #### Highlighting Methods
+
 - `highlight(targetString, searchString, highlightClass?, type?)`: Generic highlighting with support for both fuzzy and exact matching
 - `highlightMany(targetString, searchStrings, highlightClasses, type?)`: Highlights multiple strings with different styles
 - `fuzzyHighlight(targetString, searchString, highlightClass?)`: Highlights individual matching characters
@@ -366,16 +520,34 @@ Great when working with search results!
 ### Usage Examples
 
 ```typescript
-const highlighted = Highlighter.highlight(target, searchQuery, 'highlight-class', 'fuzzy');
+const highlighted = Highlighter.highlight(
+  target,
+  searchQuery,
+  'highlight-class',
+  'fuzzy'
+);
 
 // Highlighting multiple strings
-const highlightedMany = Highlighter.highlightMany(target, searchQueries, ['highlight-class-1', 'highlight-class-2'], 'exact');
+const highlightedMany = Highlighter.highlightMany(
+  target,
+  searchQueries,
+  ['highlight-class-1', 'highlight-class-2'],
+  'exact'
+);
 
 // Fuzzy highlighting
-const fuzzyHighlighted = Highlighter.fuzzyHighlight(target, searchQuery, 'highlight-class');
+const fuzzyHighlighted = Highlighter.fuzzyHighlight(
+  target,
+  searchQuery,
+  'highlight-class'
+);
 
 // Exact highlighting
-const exactHighlighted = Highlighter.exactHighlight(target, searchQuery, 'highlight-class');
+const exactHighlighted = Highlighter.exactHighlight(
+  target,
+  searchQuery,
+  'highlight-class'
+);
 ```
 
 ### Request Utilities
@@ -392,32 +564,31 @@ const exactHighlighted = Highlighter.exactHighlight(target, searchQuery, 'highli
 Example usage:
 
 ```typescript
-exists(null) // false
-exists('') // false
-exists([]) // false
-exists({}) // false
-exists(1) // true
-exists('hello') // true
+exists(null); // false
+exists(''); // false
+exists([]); // false
+exists({}); // false
+exists(1); // true
+exists('hello'); // true
 
-empty(null) // true
-empty('') // true
-empty([]) // true
-empty({}) // true
-empty(1) // false
-empty('hello') // false
+empty(null); // true
+empty(''); // true
+empty([]); // true
+empty({}); // true
+empty(1); // false
+empty('hello'); // false
 
-truthy(null) // false
-truthy('') // false
-truthy([]) // false
-truthy({}) // false
-truthy(1) // true
-truthy('hello') // true
+truthy(null); // false
+truthy(''); // false
+truthy([]); // false
+truthy({}); // false
+truthy(1); // true
+truthy('hello'); // true
 
-falsy(null) // true
-falsy('') // true
-falsy([]) // true
-falsy({}) // true
-falsy(1) // false
-falsy('hello') // false
+falsy(null); // true
+falsy(''); // true
+falsy([]); // true
+falsy({}); // true
+falsy(1); // false
+falsy('hello'); // false
 ```
-
