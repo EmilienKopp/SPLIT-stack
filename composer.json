@@ -2,14 +2,22 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
+    "version": "0.2.0",
     "description": "The skeleton application for the Laravel framework.",
     "keywords": [
         "laravel",
         "framework"
     ],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../PHP_packages/Stashable"
+        }
+    ],
     "require": {
         "php": "^8.2",
+        "emilienkopp/stashable": "^0.1.0",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^11.31",
         "laravel/prompts": "^0.3.2",
@@ -76,6 +84,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

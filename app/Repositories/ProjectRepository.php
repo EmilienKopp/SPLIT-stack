@@ -3,14 +3,15 @@
 namespace App\Repositories;
 
 use App\Models\Project;
-use App\Services\WithCache;
-use App\Traits\CacheableRepo;
+use EmilienKopp\Stashable\Traits\Stashable;
+use EmilienKopp\Stashable\Attributes\WithCache;
+
 
 class ProjectRepository {
 
-  use CacheableRepo;
+  use Stashable;
 
-  #[WithCache('projects.all', 30)]
+  #[WithCache(key: 'projects.all', ttl: 10)]
   public static function index() {
     sleep(4);
     return Project::all();
