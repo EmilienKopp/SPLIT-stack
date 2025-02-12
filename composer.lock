@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a9fc5f3c90b641800b871ccd029aa32",
+    "content-hash": "91164a82f69ef8cc33903c7edf68d1ee",
     "packages": [
         {
             "name": "brick/math",
@@ -656,52 +656,6 @@
                 }
             ],
             "time": "2024-12-27T00:36:43+00:00"
-        },
-        {
-            "name": "emilienkopp/stashable",
-            "version": "0.1.0",
-            "dist": {
-                "type": "path",
-                "url": "../PHP_packages/Stashable",
-                "reference": "edb3e0b2ca312f34af4aafd49f1ab08705e840ad"
-            },
-            "require": {
-                "laravel/framework": "^11.0",
-                "php": "^8.2"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "EmilienKopp\\Stashable\\StashableServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Emilienkopp\\Stashable\\": "src/"
-                },
-                "classmap": [
-                    "src/StashableServiceProvider.php",
-                    "src/Console/Commands",
-                    "src/Traits/Stashable.php",
-                    "src/Attributes/WithCache.php",
-                    "src/Services/RepoCache.php",
-                    "src/Utils/Attr.php"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "EmilienKopp"
-                }
-            ],
-            "description": "An attribute-based caching system for repositories",
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "firebase/php-jwt",
@@ -4989,6 +4943,181 @@
                 }
             ],
             "time": "2025-01-13T13:04:43+00:00"
+        },
+        {
+            "name": "splitstack/laravel-enum-friendly",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EmilienKopp/EnumFriendly.git",
+                "reference": "ce9e3b760adff5d13ec1c7f03d3cc0be6b680fb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EmilienKopp/EnumFriendly/zipball/ce9e3b760adff5d13ec1c7f03d3cc0be6b680fb8",
+                "reference": "ce9e3b760adff5d13ec1c7f03d3cc0be6b680fb8",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^9.0|^10.0|^11.0",
+                "illuminate/support": "^9.0|^10.0|^11.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^7.0|^8.0",
+                "phpunit/phpunit": "^9.0|^10.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Splitstack\\EnumFriendly\\EnumFriendlyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Splitstack\\EnumFriendly\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "EmilienKopp"
+                }
+            ],
+            "description": "Make your Laravel enums friendly with TypeScript, selects, and many more convenient features",
+            "keywords": [
+                "Forms",
+                "enum",
+                "friendly",
+                "laravel",
+                "translations",
+                "typescript"
+            ],
+            "support": {
+                "issues": "https://github.com/EmilienKopp/EnumFriendly/issues",
+                "source": "https://github.com/EmilienKopp/EnumFriendly/tree/main"
+            },
+            "time": "2025-02-11T16:54:37+00:00"
+        },
+        {
+            "name": "splitstack/laravel-metamon",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EmilienKopp/Metamon.git",
+                "reference": "e2d7c151c24e7ba4d1c4dbb17fd1d1b718111ff9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EmilienKopp/Metamon/zipball/e2d7c151c24e7ba4d1c4dbb17fd1d1b718111ff9",
+                "reference": "e2d7c151c24e7ba4d1c4dbb17fd1d1b718111ff9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
+                "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.31",
+                "phpunit/phpunit": "^10.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Splitstack\\Metamon\\MetamonServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Splitstack\\Metamon\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emilien Kopp",
+                    "email": "emilien.kopp@gmail.com"
+                }
+            ],
+            "description": "A Laravel package for handling model metadata with role-based access control",
+            "support": {
+                "issues": "https://github.com/EmilienKopp/Metamon/issues",
+                "source": "https://github.com/EmilienKopp/Metamon/tree/main"
+            },
+            "time": "2025-02-12T23:36:46+00:00"
+        },
+        {
+            "name": "splitstack/laravel-stashable",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EmilienKopp/Stashable.git",
+                "reference": "4c81b62764b9b3aac7f7b284d2ee3c6fe2e703ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EmilienKopp/Stashable/zipball/4c81b62764b9b3aac7f7b284d2ee3c6fe2e703ea",
+                "reference": "4c81b62764b9b3aac7f7b284d2ee3c6fe2e703ea",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^10.0|^11.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.31",
+                "phpunit/phpunit": "^10.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Splitstack\\Stashable\\StashableServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Splitstack\\Stashable\\": "src/"
+                },
+                "classmap": [
+                    "src/StashableServiceProvider.php",
+                    "src/Console/Commands",
+                    "src/Traits/Stashable.php",
+                    "src/Attributes/WithCache.php",
+                    "src/Services/RepoCache.php",
+                    "src/Utils/Attr.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "EmilienKopp"
+                }
+            ],
+            "description": "An attribute-based caching system for repositories",
+            "support": {
+                "issues": "https://github.com/EmilienKopp/Stashable/issues",
+                "source": "https://github.com/EmilienKopp/Stashable/tree/main"
+            },
+            "time": "2025-02-12T23:31:58+00:00"
         },
         {
             "name": "symfony/clock",
@@ -9967,7 +10096,10 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "splitstack/laravel-metamon": 20,
+        "splitstack/laravel-stashable": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
