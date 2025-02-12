@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum ProjectType: string
 {
-    use ExtendEnums;
+    use ExtendedEnum;
 
     case OpenSource = 'open_source';
     case Commercial = 'commercial';

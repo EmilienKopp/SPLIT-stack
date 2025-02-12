@@ -3,8 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Project;
-use EmilienKopp\Stashable\Traits\Stashable;
-use EmilienKopp\Stashable\Attributes\WithCache;
+use Splitstack\Stashable\Traits\Stashable;
+use Splitstack\Stashable\Attributes\WithCache;
 
 
 class ProjectRepository {

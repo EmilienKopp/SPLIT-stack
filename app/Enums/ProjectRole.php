@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum ProjectRole: string
 {
-    use ExtendEnums;
+    use ExtendedEnum;
 
     case PO = 'Product Owner';
     case PL = 'Project Lead';

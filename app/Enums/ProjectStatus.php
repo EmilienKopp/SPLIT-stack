@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum ProjectStatus: string
 {
-    use ExtendEnums;
+    use ExtendedEnum    ;
     case Active = 'active';
     case Inactive = 'inactive';
     case Archived = 'archived';

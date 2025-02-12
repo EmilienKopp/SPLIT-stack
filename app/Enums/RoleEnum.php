@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
 
 enum RoleEnum: string
 {
-    use ExtendEnums;
+    use ExtendedEnum;
     case Admin = 'admin';
     case Freelancer = 'freelancer';
     case BusinessOwner = 'business_owner';

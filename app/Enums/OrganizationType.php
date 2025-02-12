@@ -2,12 +2,12 @@
 
 namespace App\Enums;
 
-use App\Traits\ExtendEnums;
-use Illuminate\Support\Traits\EnumeratesValues;
+use Splitstack\EnumFriendly\Traits\ExtendedEnum;
+
 
 enum OrganizationType: string
 {
-    use ExtendEnums;
+    use ExtendedEnum;
     case Freelancer = 'freelancer';
     case Corporation = 'corporation';
     case NonProfit = 'non_profit';
