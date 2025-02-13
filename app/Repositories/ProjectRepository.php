@@ -13,7 +13,6 @@ class ProjectRepository {
 
   #[WithCache(key: 'projects.all', ttl: 10)]
   public static function index() {
-    sleep(4);
     return Project::all();
   }
 
