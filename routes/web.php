@@ -27,6 +27,10 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('organization', OrganizationController::class);
     Route::resource('project', ProjectController::class);
+
+    Route::group(['prefix' => 'project/{project}'], function () {
+        Route::post('metadata', [ProjectController::class, 'addMedata'])->name('project.metadata');
+    });
 });
 
 require __DIR__.'/auth.php';
