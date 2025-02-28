@@ -1,3 +1,44 @@
+import { WordPair } from './models.d';
+export interface MatchingGame {
+    id?: number;
+    user_id: number;
+    user?: User;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+    score: number;
+    word_pairs?: WordPair[];
+    results?: any[];
+}
+
+export interface Result {
+    id?: number;
+    matching_game_id: number;
+    matching_game?: MatchingGame;
+    score: number;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+}
+
+export interface WordPair {
+    id?: number;
+    source_word: string;
+    target_word: string;
+    source_language: string;
+    target_language: string;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+}
+
+export interface MatchingGameWordPair {
+    id?: number;
+    matching_game_id: number;
+    matching_game?: MatchingGame;
+    word_pair_id: number;
+    word_pair?: WordPair;
+    created_at?: Date | string;
+    updated_at?: Date | string;
+}
+
 export interface Organization {
     id: number;
     user_id?: number;
@@ -63,4 +104,8 @@ export interface User {
     updated_at?: Date | string;
 }
 
-export type ModelTypes = Organization | OrganizationUser | Project | ProjectUser | User;
+export interface WordPair {
+
+}
+
+export type ModelTypes = MatchingGame | Organization | OrganizationUser | Project | ProjectUser | User | WordPair;

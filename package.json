@@ -33,6 +33,7 @@
         "vitest": "^2.1.8"
     },
     "dependencies": {
+        "@neoconfetti/svelte": "^2.2.1",
         "@steeze-ui/heroicons": "^2.4.2",
         "clsx": "^2.1.1",
         "dayjs": "^1.11.13",

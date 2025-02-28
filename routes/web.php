@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\MatchingGameController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,6 +32,16 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'project/{project}'], function () {
         Route::post('metadata', [ProjectController::class, 'addMedata'])->name('project.metadata');
     });
+
+    Route::group(['prefix' => 'game'], function () {
+        Route::get('matching', [MatchingGameController::class, 'index'])->name('game.index');
+        Route::get('matching/create', [MatchingGameController::class, 'create'])->name('game.create');
+        Route::get('matching/{game}', [MatchingGameController::class, 'play'])->name('game.play');
+        Route::post('matching', [MatchingGameController::class, 'store'])->name('game.store');
+        Route::delete('matching/{game}', [MatchingGameController::class, 'destroy'])->name('game.destroy');
+        Route::patch('matching/{game}', [MatchingGameController::class, 'update'])->name('game.update');
+        Route::post('matching/{game}/results', [MatchingGameController::class, 'setScore'])->name('game.setScore');
+    });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

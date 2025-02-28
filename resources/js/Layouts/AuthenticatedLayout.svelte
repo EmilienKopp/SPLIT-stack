@@ -190,7 +190,7 @@
       </header>
     {/if}
     <!-- Page Content -->
-    <main class="py-10 px-4 sm:px-8 lg:px-14" transition:fade>
+    <main class="py-10 px-4 sm:px-8 lg:px-14 w-full h-full" transition:fade>
       <Toast show={false} />
       {@render children?.()}
     </main>

@@ -18,6 +18,11 @@ export class FreelancerNavigationStrategy implements INavigationStrategy<Navigat
         href: route('organization.index'),
         active: false,
       },
+      {
+        name: 'Game',
+        href: route('game.index'),
+        active: false,
+      }
     ];
   }
 }

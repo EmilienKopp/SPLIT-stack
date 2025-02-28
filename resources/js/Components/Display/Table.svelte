@@ -2,7 +2,7 @@
   import { run, self } from 'svelte/legacy';
 
   import { query } from '$lib/stores';
-  import { FilterService } from '$lib/utils/highlight';
+  import { Highlighter } from '$lib/utils/highlight';
   import { dot } from '$lib/utils/objects';
   import { twMerge } from 'tailwind-merge';
   import type { TableAction, TableHeader } from '../../types/components/Table';
@@ -95,7 +95,10 @@
             )}
           >
             {#each headers as header}
-              {@const value = dot(row, header.key)}
+              {@const value = header.transformer 
+                ? header.transformer(row)
+                : dot(row, header?.key)
+              }
               <td
                 class="whitespace-nowrap max-w-72 truncate"
                 onclick={self(() => handleRowClick(row))}
@@ -120,7 +123,7 @@
                         : value}
                       {#if searchStrings?.length && typeof formatted === 'string' && header.searchable}
                         <p>
-                          {@html FilterService.highlightMany(
+                          {@html Highlighter.highlightMany(
                             formatted,
                             searchStrings,
                             ['bg-yellow-100', 'bg-blue-100'],
@@ -139,12 +142,14 @@
               <td class="text-center flex gap-2">
                 {#each actions ?? [] as action}
                   {#if !action.hidden?.(row)}
-                    <button
-                      onclick={() => action.callback(row)}
+
+                    <a
+                      onclick={() => action?.callback(row)}
                       class={twMerge(
-                        'mx-1 px-1 hover:underline flex items-center gap-1s',
+                        'mx-1 px-1 hover:underline flex items-center gap-1s cursor-pointer',
                         action.css?.(row)
                       )}
+                      href={action.href?.(row)}
                     >
                       {#if action.icon}
                         {@const SvelteComponent_1 = action.icon(row)}
@@ -153,7 +158,7 @@
                         />
                       {/if}
                       {action.label}
-                    </button>
+                    </a>
                   {/if}
                 {/each}
               </td>
