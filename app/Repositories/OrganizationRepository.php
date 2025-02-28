@@ -2,14 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Traits\CacheableRepo;
-use App\Services\WithCache;
+use Splitstack\Stashable\Traits\Stashable;
+use Splitstack\Stashable\Attributes\WithCache;
 use App\Models\Organization;
 
 const DEFAULT_TTL = 60;
 
 class OrganizationRepository {
-  use CacheableRepo;
+  use Stashable;
 
   #[WithCache('Organization.all', DEFAULT_TTL)]
   public static function index() {

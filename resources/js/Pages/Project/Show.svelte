@@ -9,7 +9,6 @@
   let newEntry: { key: string; value: string } = $state({ key: '', value: '' });
 
   function addMetadata() {
-    
     let parsed;
     try {
       parsed = JSON.parse(newEntry.value);
@@ -58,7 +57,7 @@
       </div>
       
       <div class="bg-gray-50 p-4 rounded-lg border">
-        <Recursive {metadata} />
+        <Recursive {metadata} {addMetadata} {newEntry} />
       </div>
     </section>
   </div>
