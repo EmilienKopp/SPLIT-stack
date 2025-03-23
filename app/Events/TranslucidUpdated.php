@@ -38,7 +38,6 @@ class TranslucidUpdated implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        Log::debug('TranslucidUpdated event broadcasted for model: ' . get_class($this->model) . ' with ID: ' . $this->model->id);
         return [
             new PrivateChannel('translucid'),
         ];

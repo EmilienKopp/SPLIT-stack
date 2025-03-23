@@ -4,21 +4,26 @@
   import { ProjectBase } from '$lib/models/Project';
   import { Project } from '$lib/models/Project.svelte';
   import { toaster } from '$lib/stores/global/toaster.svelte';
+  import { translucid } from '$lib/translucid.svelte';
   import { router } from '@inertiajs/svelte';
   import { onMount } from 'svelte';
+
+  let { projects } = $props();
 
   onMount(() => {
     const channel = window.Echo.private('translucid');
 
-    channel.listen('.translucid.created', (event: any) => {
-      console.log('Received created event:', event);
+    projects.forEach((_project: ProjectBase) => {
+      const project = new Project(_project);
+      // console.log("Register",`.translucid.updated.projects.${project.id}`);
+      // channel.listen(
+      //   `.translucid.updated.projects.${project.id}`,
+      //   (event: any) => {
+      //     console.log('Received manually registered event:', event);
+      //   }
+      // );
+      translucid.watch(project);
     });
-  });
-
-  let { projects } = $props();
-
-  projects.forEach((project: ProjectBase) => {
-    project = new Project(project).translucid();
   });
 
   function createProject() {
@@ -32,6 +37,12 @@
 
   function deleteProject(id: number) {
     router.delete(`/project/${id}`);
+  }
+
+  function updateProject(id: number) {
+    router.patch(route('project.update', id), {
+      description: 'updated',
+    });
   }
 
   function whisper() {
@@ -72,8 +83,10 @@
         </div>
         <ul>
           {#each projects as project}
-            <li>{project.name}
-              <button onclick={() => deleteProject(project.id) }>Delete</button>
+            <li>
+              {project.name}
+              <button onclick={() => updateProject(project.id)}>Update</button>
+              <button onclick={() => deleteProject(project.id)}>Delete</button>
             </li>
           {/each}
         </ul>
