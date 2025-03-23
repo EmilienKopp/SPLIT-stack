@@ -131,7 +131,6 @@ export class Translucid {
         console.warn('No reference found for', subscription);
         return;
       }
-
       // Update the array if it exists
       if (this.#arrays[tableName] && entry.index !== undefined) {
         this.#arrays[tableName][entry.index] = {

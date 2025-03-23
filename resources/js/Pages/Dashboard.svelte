@@ -6,25 +6,28 @@
   import { toaster } from '$lib/stores/global/toaster.svelte';
   import { translucid } from '$lib/translucid.svelte';
   import { router } from '@inertiajs/svelte';
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
 
-  let { projects } = $props();
+  let { projects: initialProjects } = $props();
   let editing: Record<number, boolean> = $state({});
+  let projects = $state();
 
-  onMount(() => {
-    projects = translucid
-      .table('projects')
-      .registerForDelete()
-      .watchAll(projects);
-  });
+  projects = translucid
+    .table('projects')
+    .registerForDelete()
+    .watchAll(initialProjects);
 
   function createProject() {
-    router.post('/project', {
-      name: 'My new project',
-      type: 'other',
-      organization_id: 1,
-      status: 'active',
-    });
+    router.post(
+      '/project',
+      {
+        name: 'My new project',
+        type: 'other',
+        organization_id: 1,
+        status: 'active',
+      },
+      { preserveState: false }
+    );
   }
 
   function deleteProject(id: number) {
@@ -35,7 +38,7 @@
     router.patch(
       route('project.update', id),
       {
-        description: text || Math.random().toString(36).substring(7)
+        description: text || Math.random().toString(36).substring(7),
       },
       { only: [] }
     );
@@ -47,8 +50,7 @@
     });
   }
 
-
-  $inspect(translucid.updates, translucid.registeredDeletes, translucid.arrays)
+  $inspect(translucid.updates, translucid.registeredDeletes);
 </script>
 
 <svelte:head>
@@ -80,17 +82,17 @@
         </div>
         <table class="table table-xs table-zebra w-full bg-white rounded-lg">
           <tbody>
-            {#each projects as project}
+            {#each projects as project (project.id)}
               <tr>
                 <td>
                   {project.id}
                 </td>
                 <td>
-                    {project.name}
+                  {project.name}
                 </td>
                 <td>
                   {#if editing[project.id]}
-                    <input 
+                    <input
                       type="text"
                       bind:value={project.description}
                       onblur={() => {
@@ -111,13 +113,16 @@
                   {/if}
                 </td>
                 <td>
-                  <button class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md" onclick={() => (editing[project.id] = true)}>
+                  <button
+                    class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md"
+                    onclick={() => (editing[project.id] = true)}
+                  >
                     Edit
                   </button>
-                  <button class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md" onclick={() => updateProject(project.id)}>
-                    Random
-                  </button>
-                  <button class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md" onclick={() => deleteProject(project.id)}>
+                  <button
+                    class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md"
+                    onclick={() => deleteProject(project.id)}
+                  >
                     Delete
                   </button>
                 </td>
