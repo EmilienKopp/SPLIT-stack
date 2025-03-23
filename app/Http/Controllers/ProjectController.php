@@ -58,7 +58,7 @@ class ProjectController extends Controller
     {
         $project->update(request()->all());
 
-        return redirect()->back();
+        // return redirect()->back();
     }
 
     public function destroy(Project $project)

@@ -9,21 +9,13 @@
   import { onMount } from 'svelte';
 
   let { projects } = $props();
+  let editing: Record<number, boolean> = $state({});
 
   onMount(() => {
-    const channel = window.Echo.private('translucid');
-
-    projects.forEach((_project: ProjectBase) => {
-      const project = new Project(_project);
-      // console.log("Register",`.translucid.updated.projects.${project.id}`);
-      // channel.listen(
-      //   `.translucid.updated.projects.${project.id}`,
-      //   (event: any) => {
-      //     console.log('Received manually registered event:', event);
-      //   }
-      // );
-      translucid.watch(project);
-    });
+    projects = translucid
+      .table('projects')
+      .registerForDelete()
+      .watchAll(projects);
   });
 
   function createProject() {
@@ -39,10 +31,14 @@
     router.delete(`/project/${id}`);
   }
 
-  function updateProject(id: number) {
-    router.patch(route('project.update', id), {
-      description: 'updated',
-    });
+  function updateProject(id: number, text?: string) {
+    router.patch(
+      route('project.update', id),
+      {
+        description: text || Math.random().toString(36).substring(7)
+      },
+      { only: [] }
+    );
   }
 
   function whisper() {
@@ -51,7 +47,8 @@
     });
   }
 
-  $inspect(projects);
+
+  $inspect(translucid.updates, translucid.registeredDeletes, translucid.arrays)
 </script>
 
 <svelte:head>
@@ -78,18 +75,56 @@
         <div
           class="p-6 bg-gray-100 text-gray-900 flex items-center justify-between w-full"
         >
-          <button onclick={createProject}> Emit event </button>
-          <button onclick={whisper}> Whisper </button>
+          <button onclick={createProject}> New </button>
+          <!-- <button onclick={whisper}> Whisper </button> -->
         </div>
-        <ul>
-          {#each projects as project}
-            <li>
-              {project.name}
-              <button onclick={() => updateProject(project.id)}>Update</button>
-              <button onclick={() => deleteProject(project.id)}>Delete</button>
-            </li>
-          {/each}
-        </ul>
+        <table class="table table-xs table-zebra w-full bg-white rounded-lg">
+          <tbody>
+            {#each projects as project}
+              <tr>
+                <td>
+                  {project.id}
+                </td>
+                <td>
+                    {project.name}
+                </td>
+                <td>
+                  {#if editing[project.id]}
+                    <input 
+                      type="text"
+                      bind:value={project.description}
+                      onblur={() => {
+                        updateProject(project.id, project.description);
+                        editing[project.id] = false;
+                      }}
+                      onkeydown={(e) => {
+                        if (e.key === 'Enter') {
+                          updateProject(project.id, project.description);
+                          editing[project.id] = false;
+                        }
+                      }}
+                      class="input input-bordered w-full"
+                      placeholder="Description"
+                    />
+                  {:else}
+                    {project.description}
+                  {/if}
+                </td>
+                <td>
+                  <button class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md" onclick={() => (editing[project.id] = true)}>
+                    Edit
+                  </button>
+                  <button class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md" onclick={() => updateProject(project.id)}>
+                    Random
+                  </button>
+                  <button class="mx-2 p-1 bg-slate-200 hover:bg-slate-300 rounded-md" onclick={() => deleteProject(project.id)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
       </div>
     </div>
   </div></AuthenticatedLayout
