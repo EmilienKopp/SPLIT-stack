@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MatchingGameController;
+use App\Models\Project;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,8 +19,26 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $projects = Project::all();
+    return Inertia::render('Dashboard', compact('projects'));
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/test-broadcast', function () {
+    $project = \App\Models\Project::first();
+    event(new \App\Events\TranslucidCreated($project));
+    return 'Broadcast attempted';
+});
+
+Route::get('/test-reverb-connection', function () {
+    $host = env('REVERB_HOST', '127.0.0.1');
+    $port = env('REVERB_PORT', 8080);
+    $socket = @fsockopen($host, $port, $errno, $errstr, 5);
+    if (!$socket) {
+        return "Failed to connect to Reverb: $errstr ($errno)";
+    }
+    fclose($socket);
+    return "Successfully connected to Reverb at $host:$port";
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

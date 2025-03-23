@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Translucid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class WordPair extends Model
 {
     /** @use HasFactory<\Database\Factories\WordMatchFactory> */
-    use HasFactory;
+    use HasFactory, Translucid;
 
     protected $fillable = [
         'source_word',

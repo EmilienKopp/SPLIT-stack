@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Echo Test</title>
+</head>
+<body>
+    <h1>Echo Test</h1>
+    
+    <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.0/dist/echo.iife.js"></script>
+    <script>
+        console.log('Starting Echo test');
+        
+        // Echo setup
+        window.Pusher = Pusher;
+        
+        window.Echo = new Echo({
+            broadcaster: 'reverb',
+            key: 'amsgqtv5jldro9bonojc', // Your REVERB_APP_KEY
+            wsHost: 'localhost',  // Your REVERB_HOST
+            wsPort: 8080,         // Your REVERB_PORT
+            forceTLS: false,
+            enabledTransports: ['ws', 'wss'],
+            disableStats: true,
+        });
+        
+        console.log('Echo initialized', window.Echo);
+        
+        // Try to connect to a public channel
+        const channel = window.Echo.channel('test-channel');
+        
+        channel.subscribed(() => {
+            console.log('Successfully subscribed to test-channel');
+        }).error((error) => {
+            console.error('Error subscribing to channel:', error);
+        });
+        
+        channel.listen('.test-event', (e) => {
+            console.log('Test event received:', e);
+        });
+    </script>
+</body>
+</html>

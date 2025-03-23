@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Translucid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use Splitstack\Metamon\Traits\HandlesMetadata;
 class Project extends Model
 {
     /** @use HasFactory<\Database\Factories\ProjectFactory> */
-    use HasFactory, Searchable, SoftDeletes, HandlesMetadata;
+    use HasFactory, Searchable, SoftDeletes, HandlesMetadata, Translucid;
 
     protected $guarded = [];
 

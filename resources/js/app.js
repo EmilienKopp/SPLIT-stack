@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import './echo';
 
 import { createInertiaApp } from '@inertiajs/svelte';
 import { mount } from 'svelte';
