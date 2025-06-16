@@ -61,6 +61,6 @@ class TranslucidDeleted implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'translucid.deleted.' . $this->model->getTable() . '.' . $this->model->id;
+        return 'translucid.deleted.' . $this->model->getTable();
     }
 }
