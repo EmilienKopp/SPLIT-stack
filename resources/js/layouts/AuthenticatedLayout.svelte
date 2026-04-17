@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
   import Dropdown from '$components/Actions/Dropdown.svelte';
   import ApplicationLogo from '$components/ApplicationLogo.svelte';
   import Toast from '$components/Feedback/Toast/Toast.svelte';

@@ -3,8 +3,7 @@
   import Input from '$components/DataInput/Input.svelte';
   import InputError from '$components/DataInput/InputError.svelte';
   import InputLabel from '$components/DataInput/InputLabel.svelte';
-  import { useUser } from '../../../lib/hooks/index.sveltex.svelte';
-  import { Link, useForm } from '@inertiajs/svelte';
+  import { Link, useForm, page } from '@inertiajs/svelte';
 
   interface Props {
     mustVerifyEmail?: boolean;
@@ -14,7 +13,7 @@
 
   let { mustVerifyEmail = false, status, class: className }: Props = $props();
 
-  const user = useUser();
+  const user = $derived(page.props.auth.user);
 
   const form = useForm({
     name: user.name,

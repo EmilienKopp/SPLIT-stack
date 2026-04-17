@@ -2,7 +2,7 @@
   import Button from '$components/Actions/Button.svelte';
   import Swap from '$components/Actions/Swap.svelte';
   import Input from '$components/DataInput/Input.svelte';
-  import { query } from '../../lib/stores/global/query.sveltevelte';
+  import { query } from '../../lib/stores/global/query.svelte';
   import { onMount } from 'svelte';
 
   interface Props {

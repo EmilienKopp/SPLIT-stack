@@ -18,7 +18,7 @@ export default defineConfig({
     alias: {
       $lib: fileURLToPath(new URL('./resources/js/Lib', import.meta.url)),
       $components: fileURLToPath(
-        new URL('./resources/js/Components', import.meta.url)
+        new URL('./resources/js/components', import.meta.url)
       ),
       $vendor: fileURLToPath(new URL('./vendor', import.meta.url)),
       $types: fileURLToPath(new URL('./resources/js/types', import.meta.url)),

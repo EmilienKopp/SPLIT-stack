@@ -7,7 +7,6 @@
   import Checkbox from '$components/DataInput/Checkbox.svelte';
   import Input from '$components/DataInput/Input.svelte';
   import GuestLayout from '../../layouts/GuestLayout.svelte';
-  import { props } from '../../lib/storestores';
   import { Link, useForm } from '@inertiajs/svelte';
 
   let { canResetPassword, status, localEnv } = $props();

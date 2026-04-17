@@ -1,8 +1,8 @@
 <script lang="ts">
   import Select from '$components/DataInput/Select.svelte';
-  import { asSelectOptions } from '../../lib/utils/formattingtting';
-  import { getAllUserRoles, getUserRoleName } from '../../lib/inertiaertia';
-  import { RoleContext } from '../../lib/stores/global/roleContext.sveltevelte';
+  import { asSelectOptions } from '../../lib/utils/formatting';
+  import { getAllUserRoles, getUserRoleName } from '../../lib/inertia';
+  import { RoleContext } from '../../lib/stores/global/roleContext.svelte';
 
   RoleContext.selected = getUserRoleName();
   RoleContext.available = getAllUserRoles();
