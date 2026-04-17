@@ -1,16 +1,49 @@
 <?php
 
 return [
-  'models' => [
-    'include' => [
-      '*'
+    /*
+    |--------------------------------------------------------------------------
+    | Source groups
+    |--------------------------------------------------------------------------
+    | Each key maps to a source type scanned for TypeScriptConvertible classes.
+    | 'directories' are relative to app_path().
+    | 'include'/'exclude' accept glob-style class name patterns.
+    */
+    'sources' => [
+        'entities' => [
+            'directories' => ['Domain/Entities'],
+            'include'     => ['*'],
+            'exclude'     => ['Base*'],
+            'opt_in'      => false,  // introspect all concrete classes automatically
+        ],
+        'value_objects' => [
+            'directories' => ['Domain/ValueObjects'],
+            'include'     => ['*'],
+            'exclude'     => [],
+            'opt_in'      => false,  // introspect all concrete classes automatically
+        ],
+        'resources' => [
+            'directories' => ['Http/Resources', 'DTOs'],
+            'include'     => ['*'],
+            'exclude'     => [],
+            'opt_in'      => true,   // only classes implementing TypeScriptConvertible
+        ],
+    ],
 
-    ]
-  ],
+    /*
+    |--------------------------------------------------------------------------
+    | Output paths
+    |--------------------------------------------------------------------------
+    | Keys match the source group keys above, plus 'barrel' for the index file.
+    */
+    'output' => [
+        'entities'      => resource_path('js/types/entities.ts'),
+        'value_objects' => resource_path('js/types/value-objects.ts'),
+        'resources'     => resource_path('js/types/resources.ts'),
+        'barrel'        => resource_path('js/types/index.ts'),
+    ],
 
-  'output' => resource_path('js\\models.d.ts'),
-
-  'mapping' => [
+    'mapping' => [
     'integer' => 'number',
     'string' => 'string',
     'character varying' => 'string',

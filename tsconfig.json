@@ -16,10 +16,10 @@
                 "./vendor/tightenco/ziggy"
             ],
             "$lib/*": [
-                "./resources/js/Lib/*"
+                "./resources/js/lib/*"
             ],
             "$components/*": [
-                "./resources/js/Components/*"
+                "./resources/js/components/*"
             ],
             "$vendor/*": [
                 "./vendor/*"
@@ -31,10 +31,10 @@
                 "./resources/js/models.d.ts"
             ],
             "$layouts/*": [
-                "./resources/js/Layouts/*"
+                "./resources/js/layouts/*"
             ],
             "$pages/*": [
-                "./resources/js/Pages/*"
+                "./resources/js/pages/*"
             ]
         }
     },

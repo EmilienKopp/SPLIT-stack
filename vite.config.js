@@ -25,7 +25,7 @@ export default defineConfig({
       $layouts: fileURLToPath(
         new URL('./resources/js/Layouts', import.meta.url)
       ),
-      $pages: fileURLToPath(new URL('./resources/js/Pages', import.meta.url)),
+      $pages: fileURLToPath(new URL('./resources/js/pages', import.meta.url)),
       $lang: fileURLToPath(new URL('./lang', import.meta.url)),
       $models: fileURLToPath(
         new URL('./resources/js/models.d.ts', import.meta.url)

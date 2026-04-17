@@ -1,4 +1,4 @@
-import { InertiaForm } from "$lib/inertia";
+import { InertiaForm } from "../../lib/inertia";
 import { Paginated } from "$types/pagination";
 
 /**
