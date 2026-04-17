@@ -10,8 +10,7 @@
   import { props } from '$lib/stores';
   import { Link, useForm } from '@inertiajs/svelte';
 
-  export let canResetPassword = false;
-  export let status: string | undefined = undefined;
+  let { canResetPassword, status, localEnv } = $props();
 
   const form = useForm({
     email: '',
@@ -19,16 +18,13 @@
     remember: false,
   });
 
-  function submit() {
-    $form.post('/login', {
+  function submit(e: SubmitEvent) {
+    e.preventDefault();
+    form.post('/login', {
       onFinish: () => {
-        $form.reset('password');
+        form.reset('password');
       },
     });
-  }
-
-  async function facebookLogin() {
-
   }
 </script>
 
@@ -42,18 +38,19 @@
       {status}
     </div>
   {/if}
-  <form on:submit|preventDefault={submit}>
+  <form onsubmit={submit}>
     <div>
       <Input
         label="Email"
         id="email"
         type="email"
+        name="email"
         class="mt-1 block w-full"
-        bind:value={$form.email}
+        bind:value={form.email}
         required
         autofocus
         autocomplete="username"
-        errors={$form.errors?.email}
+        errors={form.errors?.email}
       />
     </div>
 
@@ -61,18 +58,19 @@
       <Input
         label="Password"
         id="password"
+        name="password"
         type="password"
         class="mt-1 block w-full"
-        bind:value={$form.password}
+        bind:value={form.password}
         required
         autocomplete="current-password"
-        errors={$form.errors?.password}
+        errors={form.errors?.password}
       />
     </div>
 
     <div class="mt-4 block">
       <label class="flex items-center" for="remember">
-        <Checkbox name="remember" bind:checked={$form.remember} />
+        <Checkbox name="remember" bind:checked={form.remember} />
         <span class="ms-2 text-sm text-gray-600">Remember me</span>
       </label>
     </div>
@@ -87,14 +85,14 @@
       {/if}
 
       <Button
-        class="ms-4 {$form.processing ? 'opacity-25' : ''}"
-        disabled={$form.processing}
+        class="ms-4 {form.processing ? 'opacity-25' : ''}"
+        disabled={form.processing}
       >
         Log in
       </Button>
     </div>
   </form>
-  {#if $props.localEnv && location.href.includes("localhost")}
+  {#if localEnv && location.href.includes("localhost")}
     <div>
       <ul>
         <li>candidate login: test@example.com</li>

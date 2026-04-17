@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
 
   import Button from '$components/Actions/Button.svelte';
   import Input from '$components/DataInput/Input.svelte';
@@ -14,18 +13,19 @@
     password_confirmation: '',
   });
 
-  const submit = () => {
-    $form.post(route('register'), {
+  const submit = (e: Event) => {
+    e.preventDefault();
+    form.post(route('register'), {
       onFinish: () => {
-        console.log($form);
-        $form.reset('password', 'password_confirmation');
+        console.log(form);
+        form.reset('password', 'password_confirmation');
       },
     });
   };
 </script>
 
 <GuestLayout>
-  <form onsubmit={preventDefault(submit)}>
+  <form onsubmit={submit}>
     <div class="flex flex-row gap-4">
       <Input
         label="First Name"
@@ -33,11 +33,11 @@
         name="name"
         type="text"
         class=""
-        bind:value={$form.name}
+        bind:value={form.name}
         required
         autofocus
         autocomplete="name"
-        errors={$form.errors.name}
+        errors={form.errors.name}
       />
     </div>
 
@@ -48,10 +48,10 @@
         name="email"
         type="email"
         class=""
-        bind:value={$form.email}
+        bind:value={form.email}
         required
         autocomplete="username"
-        errors={$form.errors.email}
+        errors={form.errors.email}
       />
     </div>
 
@@ -61,10 +61,10 @@
         id="password"
         name="password"
         class=""
-        bind:value={$form.password}
+        bind:value={form.password}
         required
         autocomplete="new-password"
-        errors={$form.errors.password}
+        errors={form.errors.password}
       />
     </div>
 
@@ -74,10 +74,10 @@
         id="password_confirmation"
         name="password_confirmation"
         class=""
-        bind:value={$form.password_confirmation}
+        bind:value={form.password_confirmation}
         required
         autocomplete="new-password"
-        errors={$form.errors.password_confirmation}
+        errors={form.errors.password_confirmation}
       />
     </div>
 
@@ -90,8 +90,8 @@
       </Link>
 
       <Button
-        class="ms-4 {$form.processing ? 'opacity-25' : ''}"
-        disabled={$form.processing}
+        class="ms-4 {form.processing ? 'opacity-25' : ''}"
+        disabled={form.processing}
       >
         Register
       </Button>

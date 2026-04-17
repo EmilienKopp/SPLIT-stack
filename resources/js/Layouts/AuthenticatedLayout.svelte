@@ -4,7 +4,9 @@
   import Toast from '$components/Feedback/Toast/Toast.svelte';
   import NavLink from '$components/Navigation/NavLink.svelte';
   import ResponsiveNavLink from '$components/Navigation/ResponsiveNavLink.svelte';
-  import { user } from '$lib/stores';
+  import { getNavigationConfig } from '$lib/config/navigation';
+  import { useUser } from '$lib/hooks/index.svelte';
+  import { RoleContext } from '$lib/stores/global/roleContext.svelte';
   import { Link, page } from '@inertiajs/svelte';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
@@ -15,8 +17,10 @@
 
   let { header, children }: Props = $props();
 
+  const user = useUser();
   let showingNavigationDropdown = $state(false);
   let supportsViewTransitions = false;
+  let navigationElements = $derived(getNavigationConfig(RoleContext.selected));
 
   onMount(() => {
     supportsViewTransitions = 'startViewTransition' in document;
@@ -56,12 +60,14 @@
             <div
               class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center"
             >
-              <NavLink
-                href={'dashboard'}
-                active={route().current('dashboard')}
-              >
-                Dashboard
-              </NavLink>
+              {#each navigationElements as element}
+                <NavLink
+                  href={element.href}
+                  active={element.active}
+                >
+                  {element.name}
+                </NavLink>
+              {/each}
             </div>
           </div>
 
@@ -74,7 +80,7 @@
                     class="inline-flex rounded-md items-center"
                     
                   >
-                    {$page.props.auth.user.name}
+                    {user.name}
                     <svg
                       class="-me-0.5 ms-2 h-4 w-4"
                       xmlns="http://www.w3.org/2000/svg"
@@ -96,6 +102,7 @@
           <!-- Hamburger -->
           <div class="-me-2 flex items-center sm:hidden">
             <button
+              aria-label="Toggle Navigation Menu"
               onclick={() =>
                 (showingNavigationDropdown = !showingNavigationDropdown)}
               class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
@@ -147,10 +154,10 @@
         <div class="border-t border-gray-200 pb-1 pt-4">
           <div class="px-4">
             <div class="text-base font-medium text-gray-800">
-              {$user.name}
+              {user.name}
             </div>
             <div class="text-sm font-medium text-gray-500">
-              {$user.email}
+              {user.email}
             </div>
           </div>
 

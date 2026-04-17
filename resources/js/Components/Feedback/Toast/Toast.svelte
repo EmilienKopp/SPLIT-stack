@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Link } from '@inertiajs/svelte';
+    import { Link, page } from '@inertiajs/svelte';
     import { onDestroy, onMount } from 'svelte';
     import { fly } from 'svelte/transition';
     import { toaster } from '$lib/stores/global/toaster.svelte';
@@ -33,8 +33,8 @@
     }
 
     onMount(() => {
-    if ($page.props.flash) {
-      toaster.fromFlash($page.props.flash);
+    if (page.props.flash) {
+      toaster.fromFlash(page.props.flash);
     } else { 
         toaster.hide();
     }

@@ -11,19 +11,17 @@
   "license": "MIT",
   "require": {
     "php": "^8.2",
-    "inertiajs/inertia-laravel": "^2.0",
-    "laravel/framework": "^11.31",
+    "inertiajs/inertia-laravel": "^3.0",
+    "laravel/framework": "^13.0",
     "laravel/prompts": "^0.3.2",
     "laravel/sanctum": "^4.0",
     "laravel/scout": "^10.11",
     "laravel/socialite": "^5.16",
-    "laravel/tinker": "^2.9",
+    "laravel/tinker": "^3.0",
     "php-http/curl-client": "^2.3",
     "spatie/laravel-medialibrary": "^11.11",
     "spatie/laravel-permission": "^6.10",
-    "splitstack/laravel-enum-friendly": "dev-main",
-    "splitstack/laravel-metamon": "dev-main",
-    "splitstack/laravel-stashable": "dev-main",
+    "splitstack/laravel-enum-friendly": "^2.0",
     "tightenco/ziggy": "^2.0"
   },
   "require-dev": {
