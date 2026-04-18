@@ -1,0 +1,18 @@
+<?php
+
+namespace App\UseCases\{{ class }};
+
+use App\Contracts\Repositories\{{ class }}RepositoryInterface;
+
+class Delete{{ class }}
+{
+    public function __construct(
+        private {{ class }}RepositoryInterface $repository,
+    ) {
+    }
+
+    public function execute(int $id): bool
+    {
+        return $this->repository->delete($id);
+    }
+}

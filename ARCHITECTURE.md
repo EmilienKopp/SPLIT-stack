@@ -9,7 +9,7 @@ This document defines the architectural conventions for this project. All contri
 This project uses a **clean(ish) layered architecture**:
 
 ```
-HTTP Layer → Action / Query Layer → Domain Layer → Repository Layer → Persistence
+HTTP Layer → Use Case Layer → Domain Layer → Repository Layer → Persistence
      ↕ (via Inertia)
 Frontend (Svelte/Inertia)
 ```
@@ -58,18 +58,28 @@ public function update(Request $request): RedirectResponse {
 
 ---
 
-### 2. Actions (`app/Actions/`)
+### 2. Use Cases (`app/UseCases/`)
 
-Actions represent **write operations** — mutations with side effects. Each action does exactly one thing.
+Use cases are the application logic layer. Each class represents a single, named operation — either a **write** (mutation with side effects) or a **read** (no side effects). Grouping them together under `UseCases/` keeps the intent clear without over-engineering the separation.
 
-- Named with an imperative verb phrase: `CreateUser`, `PublishPost`, `ProcessOrder`.
-- Single public method: `execute()` with typed parameters and an explicit return type.
+**All use cases:**
+- Have a single public method `execute()` with typed parameters and an explicit return type.
+- Are grouped by entity in a sub-namespace: `App\UseCases\Post\CreatePost`, `App\UseCases\Post\ListPosts`.
 - Accept and return **domain entities**, not Eloquent models or raw arrays.
-- Use constructor-injected **repository interfaces** for persistence — never touch Eloquent directly.
-- Actions must not know about HTTP, sessions, or `Auth::`.
+- Use constructor-injected **repository interfaces** — never touch Eloquent directly.
+- Must not know about HTTP, sessions, or `Auth::`.
+
+**Write use cases** (mutations):
+- Named with an imperative verb phrase: `CreateUser`, `PublishPost`, `ProcessOrder`.
+- Allowed to trigger side effects: dispatch events, send notifications, persist state.
+
+**Read use cases** (queries):
+- Named with a descriptive noun phrase: `GetUserProfile`, `ListPublishedPosts`, `FindOrderById`.
+- Must not trigger writes, dispatch events, or call write use cases.
+- May return a domain entity, a DTO, a collection, or a primitive — whatever the caller needs.
 
 ```php
-// CORRECT
+// Write use case
 class PublishPost {
     public function __construct(
         private readonly PostRepositoryInterface $posts,
@@ -82,26 +92,7 @@ class PublishPost {
     }
 }
 
-// WRONG — action calls Eloquent directly and knows about HTTP
-public function execute(Request $request): void {
-    Post::where('id', $request->id)->update(['published_at' => now()]);
-}
-```
-
----
-
-### 3. Queries (`app/Queries/`)
-
-Queries represent **read operations** — they return data and have no side effects.
-
-- Named with a descriptive noun phrase: `GetUserProfile`, `ListPublishedPosts`, `FindOrderById`.
-- Single public method: `execute()` with typed parameters and an explicit return type.
-- Use repository interfaces for data access — never touch Eloquent directly.
-- Must not trigger writes, dispatch events, or call actions.
-- May return a domain entity, a DTO, a collection, or a primitive — whatever the caller needs.
-
-```php
-// CORRECT
+// Read use case
 class ListActiveOrders {
     public function __construct(
         private readonly OrderRepositoryInterface $orders,
@@ -113,28 +104,21 @@ class ListActiveOrders {
     }
 }
 
-// CORRECT — returning a shaped DTO instead of an entity
-class GetUserProfile {
-    public function execute(int $userId): array {
-        $user = $this->users->findOrFail($userId);
-        return [
-            'name' => $user->name,
-            'email' => $user->email,
-            'joinedAt' => $user->created_at,
-        ];
-    }
+// WRONG — write use case calls Eloquent directly and knows about HTTP
+public function execute(Request $request): void {
+    Post::where('id', $request->id)->update(['published_at' => now()]);
 }
 
-// WRONG — query has a side effect
+// WRONG — read use case has a side effect
 public function execute(int $userId): UserEntity {
     $user = $this->users->findOrFail($userId);
-    $user->recordLastSeen();      // side effect — belongs in an action
+    $user->recordLastSeen();      // side effect — belongs in a write use case
     $this->users->save($user);
     return $user;
 }
 ```
 
-The distinction between actions and queries maps loosely to CQRS: **actions mutate, queries read**. Controllers should use a query to fetch page data and an action to handle form submissions.
+Controllers should inject a read use case to fetch page data and a write use case to handle form submissions.
 
 ---
 
@@ -259,8 +243,8 @@ After adding a new route, run `php artisan wayfinder:generate` (or let the Vite 
 
 | Layer                      | Convention                                        | Examples                                    |
 | -------------------------- | ------------------------------------------------- | ------------------------------------------- |
-| Actions                    | `VerbNoun`                                        | `CreateUser`, `PublishPost`, `ProcessOrder` |
-| Queries                    | `GetNoun` / `ListNoun` / `FindNoun`               | `GetUserProfile`, `ListActiveOrders`        |
+| Use Cases (write)          | `VerbNoun`                                        | `CreateUser`, `PublishPost`, `ProcessOrder` |
+| Use Cases (read)           | `GetNoun` / `ListNoun` / `FindNoun`               | `GetUserProfile`, `ListActiveOrders`        |
 | Entities                   | `NounEntity`                                      | `UserEntity`, `OrderEntity`                 |
 | Value Objects              | `Noun`                                            | `Money`, `EmailAddress`, `DateRange`        |
 | Repository Interfaces      | `NounRepositoryInterface`                         | `OrderRepositoryInterface`                  |
@@ -279,8 +263,8 @@ Follow this order when implementing any new feature:
 1. **Domain first**: Does it need a new entity or value object? Define it in `app/Domain/`.
 2. **Repository contract**: If new persistence is needed, add a method to the relevant interface (or create a new interface + implementation).
 3. **Register DI**: Add the binding in `RepositoryProvider`.
-4. **Query**: If the feature needs to read data, create a query in `app/Queries/`.
-5. **Action**: If the feature mutates state, create an action in `app/Actions/`.
+4. **Use case (read)**: If the feature needs to read data, create a read use case in `app/UseCases/{Entity}/`.
+5. **Use case (write)**: If the feature mutates state, create a write use case in `app/UseCases/{Entity}/`.
 6. **Form Request**: Create a `FormRequest` for any input validation.
 7. **Controller**: Create a thin controller — call the query for page data, call the action for form submissions.
 8. **Route**: Register the route in `routes/web.php` and run Wayfinder generation.
@@ -292,9 +276,9 @@ Follow this order when implementing any new feature:
 ## Anti-Patterns to Avoid
 
 - **Fat controllers**: No business logic in controllers.
-- **Eloquent in actions/queries**: Neither may import or query Eloquent models directly.
-- **Queries with side effects**: If it mutates state, it's an action, not a query.
-- **Actions that also read**: Fetch the data in a query first, pass the entity to the action.
+- **Eloquent in use cases**: Use cases may not import or query Eloquent models directly.
+- **Read use cases with side effects**: If it mutates state, it's a write use case.
+- **Write use cases that also read**: Fetch the data in a read use case first, pass the entity to the write use case.
 - **Raw `fetch` for page data**: Use Inertia deferred props instead.
 - **Hardcoded URLs in frontend**: Always use Wayfinder-generated functions.
 - **Mutable value objects**: Value objects that change state in place break the domain model.

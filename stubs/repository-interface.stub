@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Contracts\Repositories;
+
+use App\Domain\Entities\{{ class }};
+use Illuminate\Support\Collection;
+
+interface {{ class }}RepositoryInterface
+{
+    public function all(): Collection;
+    public function find(int $id): ?{{ class }};
+    public function create(array $data): {{ class }};
+    public function update(int $id, array $data): {{ class }};
+    public function delete(int $id): bool;
+}

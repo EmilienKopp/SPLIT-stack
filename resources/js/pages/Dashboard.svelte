@@ -2,6 +2,7 @@
   import Button from '$components/Actions/Button.svelte';
   import { toaster } from '../lib/stores/global/toaster.svelte';
   import AuthenticatedLayout from '../layouts/AuthenticatedLayout.svelte';
+  import DataGrid from '$components/Display/DataGrid/DataGrid.svelte';
 
 </script>
 
@@ -24,7 +25,9 @@
           <Button variant="secondary" onclick={() => toaster.info('🍞 Toasted!')}>
             Toast me!
           </Button>
+
         </div>
+        <DataGrid />
       </div>
     </div>
   </div>

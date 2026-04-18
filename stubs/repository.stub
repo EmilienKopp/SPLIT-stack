@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Contracts\Repositories\{{ class }}RepositoryInterface;
+use App\Domain\Entities\{{ class }};
+use App\Models\{{ class }} as {{ class }}Model;
+use Illuminate\Support\Collection;
+
+class {{ class }}Repository implements {{ class }}RepositoryInterface
+{
+    public function all(): Collection
+    {
+        return {{ class }}Model::all()->map(fn ($m) => new {{ class }}($m->id));
+    }
+
+    public function find(int $id): ?{{ class }}
+    {
+        $model = {{ class }}Model::find($id);
+        return $model ? new {{ class }}($model->id) : null;
+    }
+
+    public function create(array $data): {{ class }}
+    {
+        $model = {{ class }}Model::create($data);
+        return new {{ class }}($model->id);
+    }
+
+    public function update(int $id, array $data): {{ class }}
+    {
+        $model = {{ class }}Model::findOrFail($id);
+        $model->update($data);
+        return new {{ class }}($model->id);
+    }
+
+    public function delete(int $id): bool
+    {
+        return (bool) {{ class }}Model::destroy($id);
+    }
+}

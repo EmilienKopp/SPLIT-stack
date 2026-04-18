@@ -1,0 +1,19 @@
+<?php
+
+namespace App\UseCases\{{ class }};
+
+use App\Contracts\Repositories\{{ class }}RepositoryInterface;
+use Illuminate\Support\Collection;
+
+class List{{ classes }}
+{
+    public function __construct(
+        private {{ class }}RepositoryInterface $repository,
+    ) {
+    }
+
+    public function execute(): Collection
+    {
+        return $this->repository->all();
+    }
+}

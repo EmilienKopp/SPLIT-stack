@@ -1,0 +1,19 @@
+<?php
+
+namespace App\UseCases\{{ class }};
+
+use App\Contracts\Repositories\{{ class }}RepositoryInterface;
+use App\Domain\Entities\{{ class }};
+
+class Create{{ class }}
+{
+    public function __construct(
+        private {{ class }}RepositoryInterface $repository,
+    ) {
+    }
+
+    public function execute(array $data): {{ class }}
+    {
+        return $this->repository->create($data);
+    }
+}
