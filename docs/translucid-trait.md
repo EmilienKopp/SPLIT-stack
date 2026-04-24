@@ -1,6 +1,6 @@
 # Translucid Trait
 
-The Translucid trait provides automatic event broadcasting for Eloquent models. When added to a model, it will automatically dispatch events on create, update, and delete operations, which will be broadcast on the "translucid" private channel.
+The Translucid trait provides automatic event broadcasting for Eloquent models. When added to a model, it will automatically dispatch events on create, update, and delete operations, which will be broadcast on the `translucid` private channel.
 
 ## Installation
 
@@ -52,141 +52,119 @@ class YourModel extends Model
 
 ## How It Works
 
-The Translucid trait hooks into the Eloquent model events:
+The Translucid trait uses `bootTranslucid()` (Laravel's per-trait boot convention) to hook into Eloquent model events without overriding the model's own `boot()` method:
 
-- `created`: Dispatches a `TranslucidCreated` event when a model is created
-- `updated`: Dispatches a `TranslucidUpdated` event when a model is updated
-- `deleted`: Dispatches a `TranslucidDeleted` event when a model is deleted
+- `created` → dispatches `TranslucidCreated`
+- `updated` → dispatches `TranslucidUpdated`
+- `deleted` → dispatches `TranslucidDeleted`
 
-Each event includes the model instance and broadcasts the following data:
+### Broadcast event names
 
-```json
-{
-  "model": "App\\Models\\YourModel",
-  "id": 1,
-  "data": {
-    // The full model data as an array
-  },
-  "event": "created|updated|deleted"
-}
-```
+| Operation | Event name (broadcastAs)                        | Scope       |
+|-----------|--------------------------------------------------|-------------|
+| created   | `translucid.created.{table}`                     | table-wide  |
+| updated   | `translucid.updated.{table}.{id}`                | per-record  |
+| deleted   | `translucid.deleted.{table}.{id}`                | per-record  |
 
-## Listening for Events
+All events broadcast on the `PrivateChannel('translucid')` channel.
 
-### Backend (PHP)
+### Normalized payload envelope
 
-You can listen for these events in your Laravel application by registering event listeners in your `EventServiceProvider`:
+Every event shares a common envelope:
 
-```php
-protected $listen = [
-    'App\Events\TranslucidCreated' => [
-        'App\Listeners\YourListener',
-    ],
-    // ... other events
-];
-```
+| Field   | Type   | Description                              |
+|---------|--------|------------------------------------------|
+| `type`  | string | Table name (`$model->getTable()`)        |
+| `model` | string | Fully-qualified PHP class name           |
+| `id`    | mixed  | Primary key (`$model->getKey()`)         |
+| `op`    | string | `"created"`, `"updated"`, or `"deleted"` |
 
-### Frontend (JavaScript/TypeScript)
+Additional fields per operation:
 
-#### Using Laravel Echo directly
+- **created** – `data`: full model attributes (`$model->toArray()`)
+- **updated** – `changes`: only the changed fields (`$model->getChanges()`)
+- **deleted** – no additional fields
 
-You can listen for these events in your frontend using Laravel Echo:
+## Frontend API
 
-```javascript
-Echo.private('translucid')
-    .listen('.App\\Events\\TranslucidCreated', (e) => {
-        console.log('Model created:', e.model, 'ID:', e.id, 'Data:', e.data);
-        // Handle the event
-    })
-    .listen('.App\\Events\\TranslucidUpdated', (e) => {
-        console.log('Model updated:', e.model, 'ID:', e.id, 'Data:', e.data);
-        // Handle the event
-    })
-    .listen('.App\\Events\\TranslucidDeleted', (e) => {
-        console.log('Model deleted:', e.model, 'ID:', e.id, 'Data:', e.data);
-        // Handle the event
-    });
-```
+### `watchCollection(table, opts)` — collection pages
 
-#### Using the Translucid helper class
-
-We've created a helper class to make it easier to listen for Translucid events:
+Subscribe to `created` events for a table. New records are accepted only when their payload matches the **current page URL query string** (see URL filter convention below).
 
 ```typescript
-// resources/js/Lib/translucid.svelte.ts
-import Translucid from '$lib/translucid.svelte';
+import { watchCollection } from '@/Lib/translucid.svelte';
 
-// Listen for all Translucid events
-Translucid.listen(
-  // Created event handler
-  (e) => {
-    console.log('Model created:', e);
-    // Handle created event
+const stop = watchCollection('posts', {
+  onCreated(payload) {
+    items = [payload.data, ...items];
   },
-  // Updated event handler
-  (e) => {
-    console.log('Model updated:', e);
-    // Handle updated event
-  },
-  // Deleted event handler
-  (e) => {
-    console.log('Model deleted:', e);
-    // Handle deleted event
-  }
-);
+});
+
+// Call stop() in onDestroy / component teardown to unsubscribe
 ```
 
-#### Using model-specific helpers
+Returns an unsubscribe function.
 
-For model-specific events, you can use the model's helper methods:
+#### URL filter convention
+
+Filtering is driven entirely by URL query params — no server-side state needed.
+
+| URL pattern                     | Meaning                                  |
+|---------------------------------|------------------------------------------|
+| `?status=published`             | `data.status === "published"`            |
+| `?category_id=5`                | `data.category_id === "5"`              |
+| `?status[]=draft&status[]=review` | `data.status` is in `{"draft","review"}` |
+
+Params named `page`, `sort`, `order`, `direction`, `per_page`, `limit`, `offset` are always ignored. All comparisons are string-based. Parameter order does not matter.
+
+---
+
+### `watchId(table, id, opts)` — individual record pages
+
+Subscribe to `updated` and `deleted` events for a specific record.
 
 ```typescript
-// resources/js/Lib/models/Project.svelte.ts
-import { Project } from '$lib/models/Project.svelte';
+import { watchId } from '@/Lib/translucid.svelte';
 
-// Listen for Project-specific events
-Project.listenForEvents(
-  // Created event handler
-  (project) => {
-    console.log('Project created:', project);
-    // Handle project created
+const stop = watchId('posts', post.id, {
+  onUpdated(payload) {
+    Object.assign(post, payload.changes);
   },
-  // Updated event handler
-  (project) => {
-    console.log('Project updated:', project);
-    // Handle project updated
+  onDeleted() {
+    // e.g. redirect away
   },
-  // Deleted event handler
-  (project) => {
-    console.log('Project deleted:', project);
-    // Handle project deleted
-  }
-);
+});
 
-// Or listen for events on a specific project instance
-const project = new Project({ id: 1, name: 'My Project', /* ... */ });
-project.listenForEvents(
-  // Updated event handler
-  (updatedProject) => {
-    console.log('This project was updated:', updatedProject);
-    // Handle this project updated
-  },
-  // Deleted event handler
-  (deletedProject) => {
-    console.log('This project was deleted:', deletedProject);
-    // Handle this project deleted
-  }
-);
+// Call stop() in onDestroy / component teardown
+```
+
+Returns an unsubscribe function.
+
+---
+
+### `Translucid` class — reactive array watching
+
+For reactive Svelte stores backed by the class API:
+
+```typescript
+import { translucid } from '@/Lib/translucid.svelte';
+
+// Watch a specific model for updates & deletes
+translucid.table('posts').watch(post);
+
+// Watch an entire array (registers update + delete listeners per record)
+translucid.table('posts').watchAll(posts);
+
+// Stop watching a model
+translucid.table('posts').unwatch(post);
 ```
 
 ## Channel Authorization
 
-The 'translucid' channel is a private channel, which means users must be authenticated to listen to it. The default authorization logic in `routes/channels.php` allows any authenticated user to listen to the channel:
+The `translucid` channel is a private channel; users must be authenticated. The default authorization in `routes/channels.php`:
 
 ```php
 Broadcast::channel('translucid', function ($user) {
     return Auth::check();
 });
 ```
-
-You can customize this logic to restrict access based on your application's requirements.
