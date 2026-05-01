@@ -10,7 +10,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class TranslucidDeleted implements ShouldBroadcast
 {
@@ -38,7 +37,6 @@ class TranslucidDeleted implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        Log::debug('TranslucidDeleted event broadcasted for model: ' . get_class($this->model) . ' with ID: ' . $this->model->id);
         return [
             new PrivateChannel('translucid'),
         ];
@@ -52,15 +50,15 @@ class TranslucidDeleted implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
+            'type'  => $this->model->getTable(),
             'model' => get_class($this->model),
-            'id' => $this->model->id,
-            'data' => $this->model->toArray(),
-            'event' => 'deleted',
+            'id'    => $this->model->getKey(),
+            'op'    => 'deleted',
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'translucid.deleted.' . $this->model->getTable();
+        return 'translucid.deleted.' . $this->model->getTable() . '.' . $this->model->getKey();
     }
 }

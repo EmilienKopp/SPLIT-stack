@@ -7,16 +7,13 @@ use Illuminate\Notifications\Notifiable;
 use App\Events\TranslucidCreated;
 use App\Events\TranslucidUpdated;
 use App\Events\TranslucidDeleted;
-use Illuminate\Support\Facades\Log;
 
 trait Translucid
 {
     use Notifiable;
 
-    protected static function boot()
+    protected static function bootTranslucid()
     {
-        parent::boot();
-
         self::created(function (Model $model) {
             event(new TranslucidCreated($model));
         });

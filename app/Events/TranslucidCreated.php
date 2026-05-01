@@ -51,10 +51,11 @@ class TranslucidCreated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
+            'type'  => $this->model->getTable(),
             'model' => get_class($this->model),
-            'id' => $this->model->id,
-            'data' => $this->model->toArray(),
-            'event' => 'created',
+            'id'    => $this->model->getKey(),
+            'op'    => 'created',
+            'data'  => $this->model->toArray(),
         ];
     }
 

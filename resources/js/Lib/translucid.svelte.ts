@@ -1,5 +1,42 @@
 import { SvelteMap } from 'svelte/reactivity';
 
+// ---------------------------------------------------------------------------
+// Normalized event payload types (match backend broadcastWith envelopes)
+// ---------------------------------------------------------------------------
+
+export interface TranslucidCreatedPayload {
+  /** Table name (e.g. "posts") */
+  type: string;
+  /** Fully-qualified PHP class name */
+  model: string;
+  id: string | number;
+  op: 'created';
+  /** Full model attributes */
+  data: Record<string, any>;
+}
+
+export interface TranslucidUpdatedPayload {
+  type: string;
+  model: string;
+  id: string | number;
+  op: 'updated';
+  /** Only the changed fields (from Model::getChanges()) */
+  changes: Record<string, any>;
+}
+
+export interface TranslucidDeletedPayload {
+  type: string;
+  model: string;
+  id: string | number;
+  op: 'deleted';
+}
+
+export type TranslucidPayload =
+  | TranslucidCreatedPayload
+  | TranslucidUpdatedPayload
+  | TranslucidDeletedPayload;
+
+/** @deprecated Use TranslucidPayload union types instead */
 export interface TranslucidEvent {
   model: string;
   id: number;
@@ -102,7 +139,7 @@ export class Translucid {
   }
 
   /**
-   * Setup real-time watching for a model
+   * Setup real-time watching for a model (updates + deletes).
    */
   watch(model: BaseModel, index?: number): void {
     if (!this.echoReady()) return;
@@ -117,32 +154,52 @@ export class Translucid {
 
     this.register(model, index);
 
-    const subscription = `.translucid.updated.${tableName}.${id}`;
-    if (this.hasSubscription(subscription)) {
-      return;
-    }
+    const updateSub = `.translucid.updated.${tableName}.${id}`;
+    const deleteSub = `.translucid.deleted.${tableName}.${id}`;
 
     const channel = this.#echo.private('translucid');
     if (!channel) return;
 
-    channel.listen(subscription, (event: any) => {
-      let entry = this.retrieveEntryFromSub(subscription);
-      if (!entry) {
-        console.warn('No reference found for', subscription);
-        return;
-      }
-      // Update the array if it exists
-      if (this.#arrays[tableName] && entry.index !== undefined) {
-        this.#arrays[tableName][entry.index] = {
-          ...this.#arrays[tableName][entry.index],
-          ...event.data,
-        };
-      }
+    if (!this.hasSubscription(updateSub)) {
+      channel.listen(updateSub, (event: TranslucidUpdatedPayload) => {
+        let entry = this.retrieveEntryFromSub(updateSub);
+        if (!entry) {
+          console.warn('No reference found for', updateSub);
+          return;
+        }
+        // Update the array if it exists
+        if (this.#arrays[tableName] && entry.index !== undefined) {
+          this.#arrays[tableName][entry.index] = {
+            ...this.#arrays[tableName][entry.index],
+            ...event.changes,
+          };
+        }
 
-      // Always update the reference
-      entry.ref = { ...entry.ref, ...event.data };
-      this.#updates.get(tableName)?.set(id, entry);
-    });
+        // Always update the reference
+        entry.ref = { ...entry.ref, ...event.changes };
+        this.#updates.get(tableName)?.set(id, entry);
+      });
+    }
+
+    // Register per-record delete listener (idempotent via Set key)
+    const deleteKey = `${tableName}.${id}`;
+    if (!this.#registeredDeletes.has(deleteKey)) {
+      this.#registeredDeletes.add(deleteKey);
+
+      channel.listen(deleteSub, (_event: TranslucidDeletedPayload) => {
+        if (this.#arrays[tableName]) {
+          const idx = this.#arrays[tableName].findIndex((m) => m.id === id);
+          if (idx !== -1) {
+            this.#arrays[tableName].splice(idx, 1);
+          }
+        }
+
+        const tableMap = this.#updates.get(tableName);
+        if (tableMap) {
+          tableMap.delete(id);
+        }
+      });
+    }
   }
 
   /**
@@ -184,50 +241,21 @@ export class Translucid {
 
     this.unregister(model);
 
-    const channelName = `.translucid.updated.${tableName}.${id}`;
     const channel = this.#echo.private('translucid');
-
     if (!channel) return;
-    channel.stopListening(channelName);
+
+    channel.stopListening(`.translucid.updated.${tableName}.${id}`);
+    channel.stopListening(`.translucid.deleted.${tableName}.${id}`);
+
+    this.#registeredDeletes.delete(`${tableName}.${id}`);
   }
 
   /**
-   * Register for delete events on the current table
+   * Register for delete events on the current table.
+   * Per-record delete listeners are now registered automatically by watch();
+   * this method is kept for backwards compatibility.
    */
   registerForDelete(): Translucid {
-    if (!this.echoReady() || !this.#currentTable) {
-      return this;
-    }
-
-    const tableName = this.#currentTable;
-
-    // Only register once per table
-    if (this.#registeredDeletes.has(tableName)) {
-      return this;
-    }
-
-    this.#registeredDeletes.add(tableName);
-
-    const channel = this.#echo.private('translucid');
-    const deleteEvent = `.translucid.deleted.${tableName}`;
-
-    channel?.listen(deleteEvent, (event: any) => {
-      const { id } = event;
-      if (this.#arrays[tableName]) {
-        const index = this.#arrays[tableName].findIndex(
-          (model) => model.id === id
-        );
-        if (index !== -1) {
-          this.#arrays[tableName].splice(index, 1);
-        }
-      }
-
-      const updateInstancesMap = this.#updates.get(tableName);
-      if (updateInstancesMap) {
-        updateInstancesMap.delete(id);
-      }
-    });
-
     return this;
   }
 
@@ -303,3 +331,172 @@ export class Translucid {
 }
 
 export const translucid = Translucid.acquire();
+
+// ---------------------------------------------------------------------------
+// Standalone functional API
+// ---------------------------------------------------------------------------
+
+/**
+ * URL query-string params that are never treated as model field filters.
+ * Extend this list as needed.
+ */
+const IGNORED_FILTER_PARAMS = new Set([
+  'page', 'sort', 'order', 'direction', 'per_page', 'limit', 'offset',
+]);
+
+/**
+ * Build a predicate map from the current page URL query string.
+ *
+ * Convention:
+ *   ?field=value        → strict equality
+ *   ?field[]=a&field[]=b → field must be in {a, b}
+ *
+ * Keys are sorted so parameter order does not affect matching.
+ */
+function buildUrlPredicate(): Map<string, string | string[]> {
+  const params = new URLSearchParams(window.location.search);
+  const predicate = new Map<string, string | string[]>();
+
+  // Collect & sort keys for canonicalization
+  const keys = Array.from(new Set(params.keys())).sort();
+
+  for (const key of keys) {
+    if (IGNORED_FILTER_PARAMS.has(key)) continue;
+
+    if (key.endsWith('[]')) {
+      // ?field[]=a&field[]=b → array filter
+      const field = key.slice(0, -2);
+      predicate.set(field, params.getAll(key));
+    } else {
+      const values = params.getAll(key);
+      predicate.set(key, values.length > 1 ? values : values[0]);
+    }
+  }
+
+  return predicate;
+}
+
+/**
+ * Test whether a model's data object satisfies every entry in the predicate.
+ * All comparisons are string-based (no numeric coercion).
+ */
+function matchesPredicate(
+  data: Record<string, any>,
+  predicate: Map<string, string | string[]>
+): boolean {
+  for (const [field, expected] of predicate) {
+    if (!(field in data)) return false;
+    const actual = String(data[field]);
+    if (Array.isArray(expected)) {
+      if (!expected.includes(actual)) return false;
+    } else {
+      if (actual !== expected) return false;
+    }
+  }
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// watchCollection
+// ---------------------------------------------------------------------------
+
+export interface WatchCollectionOpts {
+  /**
+   * Called when a created event arrives whose payload passes the URL-filter
+   * predicate derived from the current page's query string.
+   */
+  onCreated: (payload: TranslucidCreatedPayload) => void;
+}
+
+/**
+ * Subscribe to table-wide `created` events for `table`.
+ *
+ * Membership is determined client-side by matching the created model's data
+ * against the current URL query string (see URL convention in docs).
+ *
+ * @returns Unsubscribe function – call it in your component's cleanup/onDestroy.
+ *
+ * @example
+ * const stop = watchCollection('posts', {
+ *   onCreated(payload) { items = [payload.data, ...items]; }
+ * });
+ * onDestroy(stop);
+ */
+export function watchCollection(
+  table: string,
+  opts: WatchCollectionOpts
+): () => void {
+  if (!window.Echo) {
+    console.warn('watchCollection: Echo is not available');
+    return () => {};
+  }
+
+  const predicate = buildUrlPredicate();
+  const channel = window.Echo.private('translucid');
+  const eventName = `.translucid.created.${table}`;
+
+  channel.listen(eventName, (event: TranslucidCreatedPayload) => {
+    if (matchesPredicate(event.data, predicate)) {
+      opts.onCreated(event);
+    }
+  });
+
+  return () => {
+    channel.stopListening(eventName);
+  };
+}
+
+// ---------------------------------------------------------------------------
+// watchId
+// ---------------------------------------------------------------------------
+
+export interface WatchIdOpts {
+  /** Called with the changed fields when a per-record updated event arrives. */
+  onUpdated?: (payload: TranslucidUpdatedPayload) => void;
+  /** Called when a per-record deleted event arrives. */
+  onDeleted?: (payload: TranslucidDeletedPayload) => void;
+}
+
+/**
+ * Subscribe to per-record `updated` and `deleted` events for a known model.
+ *
+ * @returns Unsubscribe function – call it in your component's cleanup/onDestroy.
+ *
+ * @example
+ * const stop = watchId('posts', post.id, {
+ *   onUpdated(payload) { Object.assign(post, payload.changes); },
+ *   onDeleted()        { goto('/posts'); },
+ * });
+ * onDestroy(stop);
+ */
+export function watchId(
+  table: string,
+  id: string | number,
+  opts: WatchIdOpts
+): () => void {
+  if (!window.Echo) {
+    console.warn('watchId: Echo is not available');
+    return () => {};
+  }
+
+  const channel = window.Echo.private('translucid');
+  const updatedEvent = `.translucid.updated.${table}.${id}`;
+  const deletedEvent = `.translucid.deleted.${table}.${id}`;
+
+  if (opts.onUpdated) {
+    channel.listen(updatedEvent, (event: TranslucidUpdatedPayload) => {
+      opts.onUpdated!(event);
+    });
+  }
+
+  if (opts.onDeleted) {
+    channel.listen(deletedEvent, (event: TranslucidDeletedPayload) => {
+      opts.onDeleted!(event);
+    });
+  }
+
+  return () => {
+    if (opts.onUpdated) channel.stopListening(updatedEvent);
+    if (opts.onDeleted) channel.stopListening(deletedEvent);
+  };
+}

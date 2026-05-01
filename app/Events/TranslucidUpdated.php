@@ -51,15 +51,16 @@ class TranslucidUpdated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'model' => get_class($this->model),
-            'id' => $this->model->id,
-            'data' => $this->model->toArray(),
-            'event' => 'updated',
+            'type'    => $this->model->getTable(),
+            'model'   => get_class($this->model),
+            'id'      => $this->model->getKey(),
+            'op'      => 'updated',
+            'changes' => $this->model->getChanges(),
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'translucid.updated.' .$this->model->getTable(). '.' . $this->model->id;
+        return 'translucid.updated.' . $this->model->getTable() . '.' . $this->model->getKey();
     }
 }
